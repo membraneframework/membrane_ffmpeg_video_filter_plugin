@@ -158,7 +158,7 @@ void create_filter_description(char *filter_descr, int len, char *text,
     filter_descr += snprintf(filter_descr, len, ":y=(h-text_h)/2");
   } else if (strcmp(y, "top") == 0) {
     // set the same margin for width and height
-    filter_descr += snprintf(filter_descr, len, ":y= w/100");
+    filter_descr += snprintf(filter_descr, len, ":y=w/100");
   } else if (strcmp(y, "bottom") == 0) {
     filter_descr += snprintf(filter_descr, len, ":y=(h-text_h)-w/100");
   } else { // literal
