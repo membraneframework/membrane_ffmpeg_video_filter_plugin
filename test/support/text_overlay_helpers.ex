@@ -3,7 +3,7 @@ defmodule TextOverlay.Helpers do
   import ExUnit.Assertions
   import ExUnit.Callbacks
 
-  @spec prepare_paths(binary(), binary()) :: {binary(), binary(), binary()}
+  @spec prepare_paths(binary(), binary(), binary()) :: {binary(), binary(), binary()}
   def prepare_paths(filename, testname, out_extension \\ ".h264") do
     in_path = "../fixtures/text_overlay/#{filename}" |> Path.expand(__DIR__)
     ref_path = "../fixtures/text_overlay/ref-#{testname}#{out_extension}" |> Path.expand(__DIR__)
