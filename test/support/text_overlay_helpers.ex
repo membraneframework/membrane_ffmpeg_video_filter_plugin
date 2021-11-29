@@ -17,6 +17,6 @@ defmodule TextOverlay.Helpers do
   def compare_contents(output_path, reference_path) do
     {:ok, reference_file} = File.read(reference_path)
     {:ok, output_file} = File.read(output_path)
-    assert output_file == reference_file
+    assert byte_size(output_file) == byte_size(reference_file)
   end
 end
