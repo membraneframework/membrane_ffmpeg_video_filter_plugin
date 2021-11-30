@@ -9,7 +9,7 @@ defmodule TextOverlay.Helpers do
     ref_path = "../fixtures/text_overlay/ref-#{testname}#{out_extension}" |> Path.expand(__DIR__)
     out_path = "../fixtures/text_overlay/out-#{testname}#{out_extension}" |> Path.expand(__DIR__)
     File.rm(out_path)
-    # on_exit(fn -> File.rm(out_path) end)
+    on_exit(fn -> File.rm(out_path) end)
     {in_path, out_path, ref_path}
   end
 
