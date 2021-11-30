@@ -6,7 +6,7 @@ defmodule TextOverlay.TextOverlayTest do
   alias Membrane.Testing.Pipeline
 
   test "overlay given text with default settings" do
-    {in_path, out_path, ref_path} = Helpers.prepare_paths("640x360.h264", "defaults")
+    {in_path, out_path, ref_path} = Helpers.prepare_paths("640x360.h264", "defaults", ".yuv")
 
     assert {:ok, pid} =
              Pipeline.start_link(%Pipeline.Options{
@@ -15,7 +15,6 @@ defmodule TextOverlay.TextOverlayTest do
                  parser: %Membrane.H264.FFmpeg.Parser{framerate: {8, 1}},
                  decoder: Membrane.H264.FFmpeg.Decoder,
                  text_filter: %TextOverlay{text: "Some very long text"},
-                 encoder: Membrane.H264.FFmpeg.Encoder,
                  sink: %Membrane.File.Sink{location: out_path}
                ]
              })
@@ -24,11 +23,17 @@ defmodule TextOverlay.TextOverlayTest do
     assert_end_of_stream(pid, :sink, :input, 4000)
     Pipeline.stop_and_terminate(pid, blocking?: true)
 
+    Helpers.create_ffmpeg_reference(
+      "640x360.h264",
+      ref_path,
+      "drawtext=text='Some very long text':x=w/100:y=(h-text_h)-w/100"
+    )
+
     Helpers.compare_contents(out_path, ref_path)
   end
 
   test "overlay given text with centered text" do
-    {in_path, out_path, ref_path} = Helpers.prepare_paths("640x360.h264", "centered")
+    {in_path, out_path, ref_path} = Helpers.prepare_paths("640x360.h264", "centered", ".yuv")
 
     assert {:ok, pid} =
              Pipeline.start_link(%Pipeline.Options{
@@ -41,7 +46,6 @@ defmodule TextOverlay.TextOverlayTest do
                    x: :center,
                    y: :center
                  },
-                 encoder: Membrane.H264.FFmpeg.Encoder,
                  sink: %Membrane.File.Sink{location: out_path}
                ]
              })
@@ -50,11 +54,17 @@ defmodule TextOverlay.TextOverlayTest do
     assert_end_of_stream(pid, :sink, :input, 4000)
     Pipeline.stop_and_terminate(pid, blocking?: true)
 
+    Helpers.create_ffmpeg_reference(
+      "640x360.h264",
+      ref_path,
+      "drawtext=text='My text':x=(w-text_w)/2:y=(h-text_h)/2"
+    )
+
     Helpers.compare_contents(out_path, ref_path)
   end
 
   test "overlay given text with all settings applied" do
-    {in_path, out_path, ref_path} = Helpers.prepare_paths("640x360.h264", "all")
+    {in_path, out_path, ref_path} = Helpers.prepare_paths("640x360.h264", "all", ".yuv")
 
     assert {:ok, pid} =
              Pipeline.start_link(%Pipeline.Options{
@@ -72,7 +82,6 @@ defmodule TextOverlay.TextOverlayTest do
                    x: :center,
                    y: :top
                  },
-                 encoder: Membrane.H264.FFmpeg.Encoder,
                  sink: %Membrane.File.Sink{location: out_path}
                ]
              })
@@ -80,6 +89,12 @@ defmodule TextOverlay.TextOverlayTest do
     assert Pipeline.play(pid) == :ok
     assert_end_of_stream(pid, :sink, :input, 4000)
     Pipeline.stop_and_terminate(pid, blocking?: true)
+
+    Helpers.create_ffmpeg_reference(
+      "640x360.h264",
+      ref_path,
+      "drawtext=text='My text':fontcolor=white:box=1:boxcolor=orange:borderw=1:bordercolor=DarkGray:fontsize=35:x=(w-text_w)/2:y=w/100"
+    )
 
     Helpers.compare_contents(out_path, ref_path)
   end

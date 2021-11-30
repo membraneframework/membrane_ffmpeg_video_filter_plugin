@@ -32,8 +32,6 @@ defmodule TextOverlay.Helpers do
     )
   end
 
-  # ffmpeg -f rawvideo -pix_fmt yuv420p -s:v 640x360 -r 1 -i 1frame.yuv -c:v libx264 out.h264
-
   @spec compare_contents(binary(), binary()) :: true
   def compare_contents(output_path, reference_path) do
     {:ok, reference_file} = File.read(reference_path)
