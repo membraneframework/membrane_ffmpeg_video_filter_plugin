@@ -44,7 +44,6 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
       {:unifex, "~> 0.7.0"},
       {:membrane_file_plugin, "~> 0.6.0", only: [:dev, :test]},
       {:membrane_h264_ffmpeg_plugin, "~> 0.12.0", only: [:dev, :test]},
-      {:membrane_element_rawvideo_parser, "~> 0.4.0"},
       {:ex_doc, "~> 0.24", only: :dev, runtime: false},
       {:dialyxir, "~> 1.1", only: :dev, runtime: false},
       {:credo, "~> 1.5", only: :dev, runtime: false}

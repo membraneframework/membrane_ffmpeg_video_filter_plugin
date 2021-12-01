@@ -1,3 +1,6 @@
+# for tests using tmp_dir
+tmp/
+
 compile_commands.json
 .gdb_history
 bundlex.sh

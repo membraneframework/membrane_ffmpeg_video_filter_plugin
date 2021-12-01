@@ -1,6 +1,6 @@
-module(Membrane.FFmpeg.VideoFilter.TextOverlay.Native)
+module Membrane.FFmpeg.VideoFilter.TextOverlay.Native
 
-state_type("State")
+state_type "State"
 
 spec(
   create(
@@ -9,14 +9,14 @@ spec(
     height :: int,
     pixel_format_name :: atom,
     fontsize :: int,
-    box :: int,
+    box :: bool,
     boxcolor :: string,
-    border :: int,
+    border :: bool,
     fontcolor :: string,
     fontfile :: string,
-    x :: atom,
-    y :: atom
+    vertical_align :: atom,
+    horizontal_align :: atom
   ) :: {:ok :: label, state} | {:error :: label, reason :: atom}
 )
 
-spec(filter(payload, state) :: {:ok :: label, payload} | {:error :: label, reason :: atom})
+spec(apply_filter(payload, state) :: {:ok :: label, payload} | {:error :: label, reason :: atom})

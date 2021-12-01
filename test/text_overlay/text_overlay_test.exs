@@ -1,12 +1,16 @@
 defmodule TextOverlay.TextOverlayTest do
   use ExUnit.Case, async: true
+
   import Membrane.Testing.Assertions
-  alias TextOverlay.Helpers
+
   alias Membrane.FFmpeg.VideoFilter.TextOverlay
   alias Membrane.Testing.Pipeline
+  alias VideoFilter.Helpers
 
-  test "overlay given text with default settings" do
-    {in_path, out_path, ref_path} = Helpers.prepare_paths("640x360.h264", "defaults", ".yuv")
+  @tag :tmp_dir
+  test "overlay given text with default settings", %{tmp_dir: tmp_dir} do
+    {in_path, out_path, ref_path} =
+      Helpers.prepare_paths("640x360.h264", "ref-defaults.yuv", tmp_dir)
 
     assert {:ok, pid} =
              Pipeline.start_link(%Pipeline.Options{
@@ -32,8 +36,10 @@ defmodule TextOverlay.TextOverlayTest do
     Helpers.compare_contents(out_path, ref_path)
   end
 
-  test "overlay given text with centered text" do
-    {in_path, out_path, ref_path} = Helpers.prepare_paths("640x360.h264", "centered", ".yuv")
+  @tag :tmp_dir
+  test "overlay given text with centered text", %{tmp_dir: tmp_dir} do
+    {in_path, out_path, ref_path} =
+      Helpers.prepare_paths("640x360.h264", "ref-centered.yuv", tmp_dir)
 
     assert {:ok, pid} =
              Pipeline.start_link(%Pipeline.Options{
@@ -43,8 +49,8 @@ defmodule TextOverlay.TextOverlayTest do
                  decoder: Membrane.H264.FFmpeg.Decoder,
                  text_filter: %TextOverlay{
                    text: "My text",
-                   x: :center,
-                   y: :center
+                   vertical_align: :center,
+                   horizontal_align: :center
                  },
                  sink: %Membrane.File.Sink{location: out_path}
                ]
@@ -63,8 +69,9 @@ defmodule TextOverlay.TextOverlayTest do
     Helpers.compare_contents(out_path, ref_path)
   end
 
-  test "overlay given text with all settings applied" do
-    {in_path, out_path, ref_path} = Helpers.prepare_paths("640x360.h264", "all", ".yuv")
+  @tag :tmp_dir
+  test "overlay given text with all settings applied", %{tmp_dir: tmp_dir} do
+    {in_path, out_path, ref_path} = Helpers.prepare_paths("640x360.h264", "ref-all.yuv", tmp_dir)
 
     assert {:ok, pid} =
              Pipeline.start_link(%Pipeline.Options{
@@ -79,8 +86,8 @@ defmodule TextOverlay.TextOverlayTest do
                    border?: true,
                    box?: true,
                    boxcolor: "orange",
-                   x: :center,
-                   y: :top
+                   vertical_align: :center,
+                   horizontal_align: :top
                  },
                  sink: %Membrane.File.Sink{location: out_path}
                ]

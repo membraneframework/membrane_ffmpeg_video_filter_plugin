@@ -9,6 +9,8 @@ This package contains elements providing video filters based on [ffmpeg video fi
 Currently only the TextOverlay element is implemented, based on [ffmpeg drawtext filter](https://ffmpeg.org/ffmpeg-filters.html#drawtext-1).
 This element enables adding text on top of given raw video frames.  
 
+PRs with the implementation of other video filters are welcome!
+
 ## Installation
 
 The package can be installed by adding `membrane_ffmpeg_video_filter_plugin` to your list of dependencies in `mix.exs`:
@@ -25,6 +27,8 @@ end
 
 ### TextOverlay
 
+Below example pipeline adds "John Doe" text over h264 video in a specified style.
+
 ```elixir
 defmodule VideoFilter.Pipeline do
   use Membrane.Pipeline
@@ -40,9 +44,9 @@ defmodule VideoFilter.Pipeline do
       parser: %Parser{framerate: {10, 1}},
       decoder: Decoder,
       text_filter: %TextOverlay{
-        text: "My text",
+        text: "John Doe",
         x: :center,
-        fontsize: 30,
+        fontsize: 25,
         fontcolor: "white",
         border?: true
       },
@@ -64,9 +68,14 @@ defmodule VideoFilter.Pipeline do
 end
 ```
 
+Frame from original video:  
+![input](readme\input.png)  
+Output frame with filter applied:  
+![output](readme\output.png)  
+
 ## Copyright and License
 
-Copyright 2020, [Software Mansion](https://swmansion.com/?utm_source=git&utm_medium=readme&utm_campaign=membrane_ffmpeg_video_filter_plugin)
+Copyright 2021, [Software Mansion](https://swmansion.com/?utm_source=git&utm_medium=readme&utm_campaign=membrane_ffmpeg_video_filter_plugin)
 
 [![Software Mansion](https://logo.swmansion.com/logo?color=white&variant=desktop&width=200&tag=membrane-github)](https://swmansion.com/?utm_source=git&utm_medium=readme&utm_campaign=membrane_ffmpeg_video_filter_plugin)
 

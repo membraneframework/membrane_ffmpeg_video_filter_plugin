@@ -18,16 +18,14 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
               ],
               fontsize: [
                 type: :int,
-                description:
-                  "Size of the displayed font. If not set, ffmpeg's default value (16) is applied",
-                default: nil
+                description: "Size of the displayed font",
+                default: 12
               ],
               fontcolor: [
                 type: :binary,
                 description:
-                  "Choose font color according to the ffmpeg color syntax (https://ffmpeg.org/ffmpeg-utils.html#color-syntax).
-                  If not set, ffmpeg's default value (black) is applied",
-                default: nil
+                  "Choose font color according to the ffmpeg color syntax (https://ffmpeg.org/ffmpeg-utils.html#color-syntax)",
+                default: "black"
               ],
               fontfile: [
                 type: :binary,
@@ -43,20 +41,20 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
               boxcolor: [
                 type: :binary,
                 description: "If the box? is set to true, display a box in the given color",
-                default: nil
+                default: "white"
               ],
               border?: [
                 type: :boolean,
                 description: "Set to true to display a gray border around letters",
                 default: false
               ],
-              x: [
+              vertical_align: [
                 type: :atom,
                 spec: :left | :right | :center,
                 description: "Horizontal position of the displayed text",
                 default: :left
               ],
-              y: [
+              horizontal_align: [
                 type: :atom,
                 spec: :top | :bottom | :center,
                 description: "Vertical position of the displayed text",
@@ -92,23 +90,6 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
   end
 
   @impl true
-  def handle_process(
-        :input,
-        %Buffer{payload: payload} = buffer,
-        _ctx,
-        %{native_state: native_state} = state
-      ) do
-    case Native.filter(payload, native_state) do
-      {:ok, frame} ->
-        buffer = [buffer: {:output, %{buffer | payload: frame}}]
-        {{:ok, buffer}, state}
-
-      {:error, reason} ->
-        {{:error, reason}, state}
-    end
-  end
-
-  @impl true
   def handle_caps(
         :input,
         %Raw{format: format, width: width, height: height} = caps,
@@ -120,21 +101,38 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
            width,
            height,
            format,
-           int_to_native_format(state.fontsize),
-           boolean_to_native_format(state.box?),
-           binary_to_native_format(state.boxcolor),
-           boolean_to_native_format(state.border?),
-           binary_to_native_format(state.fontcolor),
-           binary_to_native_format(state.fontfile),
-           state.x,
-           state.y
+           state.fontsize,
+           state.box?,
+           state.boxcolor,
+           state.border?,
+           state.fontcolor,
+           fontfile_to_native_format(state.fontfile),
+           state.vertical_align,
+           state.horizontal_align
          ) do
       {:ok, native_state} ->
         state = %{state | native_state: native_state}
         {{:ok, caps: {:output, caps}, redemand: :output}, state}
 
       {:error, reason} ->
-        {{:error, reason}, state}
+        raise(RuntimeError, reason)
+    end
+  end
+
+  @impl true
+  def handle_process(
+        :input,
+        %Buffer{payload: payload} = buffer,
+        _ctx,
+        %{native_state: native_state} = state
+      ) do
+    case Native.apply_filter(payload, native_state) do
+      {:ok, frame} ->
+        buffer = [buffer: {:output, %{buffer | payload: frame}}]
+        {{:ok, buffer}, state}
+
+      {:error, reason} ->
+        raise(RuntimeError, reason)
     end
   end
 
@@ -148,10 +146,6 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
     {:ok, %{state | native_state: nil}}
   end
 
-  defp int_to_native_format(nil), do: -1
-  defp int_to_native_format(fontsize), do: fontsize
-  defp binary_to_native_format(nil), do: ""
-  defp binary_to_native_format(binary), do: binary
-  defp boolean_to_native_format(false), do: 0
-  defp boolean_to_native_format(true), do: 1
+  defp fontfile_to_native_format(nil), do: ""
+  defp fontfile_to_native_format(fontfile), do: fontfile
 end
