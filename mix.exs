@@ -12,14 +12,11 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
       compilers: [:unifex, :bundlex] ++ Mix.compilers(),
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
+      aliases: aliases(),
       deps: deps(),
-
-      # hex
       description:
         "Plugin for applying video filters using [FFmpeg](https://www.ffmpeg.org/) library",
       package: package(),
-
-      # docs
       name: "Membrane FFmpeg Video Filter plugin",
       source_url: @github_url,
       homepage_url: "https://membraneframework.org",
@@ -63,6 +60,10 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
     ]
   end
 
+  defp aliases do
+    [docs: ["docs", &copy_images/1]]
+  end
+
   defp docs do
     [
       main: "readme",
@@ -70,5 +71,11 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
       source_ref: "v#{@version}",
       nest_modules_by_prefix: [Membrane.FFmpeg.VideoFilter]
     ]
+  end
+
+  defp copy_images(_) do
+    File.cp_r("readme", "doc", fn source, destination ->
+      IO.gets("Overwriting #{destination} by #{source}. Type y to confirm. ") == "y\n"
+    end)
   end
 end

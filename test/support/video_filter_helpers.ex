@@ -32,8 +32,7 @@ defmodule VideoFilter.Helpers do
       )
 
     if exit_status != 0 do
-      Membrane.Logger.error("ffmpeg command error")
-      Membrane.Logger.error(result)
+      raise inspect(result)
     end
   end
 

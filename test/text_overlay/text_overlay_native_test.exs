@@ -28,9 +28,9 @@ defmodule TextOverlay.NativeTest do
 
     assert {:ok, out_frame} = Native.apply_filter(frame, ref)
     assert {:ok, file} = File.open(out_path, [:write])
+    on_exit(fn -> File.close(file) end)
 
     IO.binwrite(file, out_frame)
-    File.close(file)
 
     Helpers.create_ffmpeg_reference(
       "1frame.h264",

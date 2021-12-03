@@ -69,9 +69,9 @@ end
 ```
 
 Frame from original video:  
-![input](readme\input.png)  
+![input](input.png)  
 Output frame with filter applied:  
-![output](readme\output.png)  
+![output](output.png)  
 
 ## Copyright and License
 

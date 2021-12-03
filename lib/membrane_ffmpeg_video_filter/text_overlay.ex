@@ -115,7 +115,7 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
         {{:ok, caps: {:output, caps}, redemand: :output}, state}
 
       {:error, reason} ->
-        raise(RuntimeError, reason)
+        raise inspect(reason)
     end
   end
 
@@ -132,7 +132,7 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
         {{:ok, buffer}, state}
 
       {:error, reason} ->
-        raise(RuntimeError, reason)
+        raise inspect(reason)
     end
   end
 
