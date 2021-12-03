@@ -74,7 +74,7 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
   end
 
   defp copy_images(_) do
-    File.cp_r("readme", "doc", fn source, destination ->
+    File.cp_r("readme", "doc/readme", fn source, destination ->
       IO.gets("Overwriting #{destination} by #{source}. Type y to confirm. ") == "y\n"
     end)
   end
