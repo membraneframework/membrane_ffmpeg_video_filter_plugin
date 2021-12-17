@@ -49,8 +49,8 @@ defmodule TextOverlay.TextOverlayTest do
                  decoder: Membrane.H264.FFmpeg.Decoder,
                  text_filter: %TextOverlay{
                    text: "My text",
-                   vertical_align: :center,
-                   horizontal_align: :center
+                   horizontal_align: :center,
+                   vertical_align: :center
                  },
                  sink: %Membrane.File.Sink{location: out_path}
                ]
@@ -86,8 +86,8 @@ defmodule TextOverlay.TextOverlayTest do
                    border?: true,
                    box?: true,
                    boxcolor: "orange",
-                   vertical_align: :center,
-                   horizontal_align: :top
+                   horizontal_align: :center,
+                   vertical_align: :top
                  },
                  sink: %Membrane.File.Sink{location: out_path}
                ]

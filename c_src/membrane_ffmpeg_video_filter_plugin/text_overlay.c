@@ -5,12 +5,12 @@ static int init_filters(const char *filters_descr, State *state);
 void create_filter_description(char *filter_descr, int len, char *text,
                                int fontsize, int box, char *boxcolor,
                                int border, char *fontcolor, char *fontfile,
-                               char *vertical_align, char *horizontal_align);
+                               char *horizontal_align, char *vertical_align);
 
 UNIFEX_TERM create(UnifexEnv *env, char *text, int width, int height,
                    char *pixel_format_name, int fontsize, int box,
                    char *boxcolor, int border, char *fontcolor, char *fontfile,
-                   char *vertical_align, char *horizontal_align) {
+                   char *horizontal_align, char *vertical_align) {
 
   UNIFEX_TERM result;
   State *state = unifex_alloc_state(env);
@@ -26,8 +26,8 @@ UNIFEX_TERM create(UnifexEnv *env, char *text, int width, int height,
 
   char filter_descr[512];
   create_filter_description(filter_descr, 512, text, fontsize, box, boxcolor,
-                            border, fontcolor, fontfile, vertical_align,
-                            horizontal_align);
+                            border, fontcolor, fontfile, horizontal_align,
+                            vertical_align);
   if (init_filters(filter_descr, state) < 0) {
     result = create_result_error(env, "error_creating_filters");
     goto exit_create;
@@ -110,7 +110,7 @@ int get_pixel_format(char *fmt_name) {
 void create_filter_description(char *filter_descr, int len, char *text,
                                int fontsize, int box, char *boxcolor,
                                int border, char *fontcolor, char *fontfile,
-                               char *vertical_align, char *horizontal_align) {
+                               char *horizontal_align, char *vertical_align) {
 
   filter_descr += snprintf(filter_descr, len, "drawtext=text=%s", text);
   if (fontsize != -1) {
@@ -132,26 +132,26 @@ void create_filter_description(char *filter_descr, int len, char *text,
     filter_descr +=
         snprintf(filter_descr, len, ":bordercolor=DarkGray:borderw=1");
   }
-  if (strcmp(vertical_align, "center") == 0) {
+  if (strcmp(horizontal_align, "center") == 0) {
     filter_descr += snprintf(filter_descr, len, ":x=(w-text_w)/2");
-  } else if (strcmp(vertical_align, "right") == 0) {
+  } else if (strcmp(horizontal_align, "right") == 0) {
     // leave 1% margin to the border
     filter_descr += snprintf(filter_descr, len, ":x=(w-text_w)-w/100");
-  } else if (strcmp(vertical_align, "left") == 0) {
+  } else if (strcmp(horizontal_align, "left") == 0) {
     // leave 1% margin to the border
     filter_descr += snprintf(filter_descr, len, ":x=w/100");
   } else { // literal
-    filter_descr += snprintf(filter_descr, len, ":x=%s", vertical_align);
+    filter_descr += snprintf(filter_descr, len, ":x=%s", horizontal_align);
   }
-  if (strcmp(horizontal_align, "center") == 0) {
+  if (strcmp(vertical_align, "center") == 0) {
     filter_descr += snprintf(filter_descr, len, ":y=(h-text_h)/2");
-  } else if (strcmp(horizontal_align, "top") == 0) {
+  } else if (strcmp(vertical_align, "top") == 0) {
     // set the same margin for width and height
     filter_descr += snprintf(filter_descr, len, ":y=w/100");
-  } else if (strcmp(horizontal_align, "bottom") == 0) {
+  } else if (strcmp(vertical_align, "bottom") == 0) {
     filter_descr += snprintf(filter_descr, len, ":y=(h-text_h)-w/100");
   } else { // literal
-    filter_descr += snprintf(filter_descr, len, ":y=%s", horizontal_align);
+    filter_descr += snprintf(filter_descr, len, ":y=%s", vertical_align);
   }
 }
 

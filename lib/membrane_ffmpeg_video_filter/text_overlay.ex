@@ -48,13 +48,13 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
                 description: "Set to true to display a gray border around letters",
                 default: false
               ],
-              vertical_align: [
+              horizontal_align: [
                 type: :atom,
                 spec: :left | :right | :center,
                 description: "Horizontal position of the displayed text",
                 default: :left
               ],
-              horizontal_align: [
+              vertical_align: [
                 type: :atom,
                 spec: :top | :bottom | :center,
                 description: "Vertical position of the displayed text",
@@ -107,8 +107,8 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
            state.border?,
            state.fontcolor,
            fontfile_to_native_format(state.fontfile),
-           state.vertical_align,
-           state.horizontal_align
+           state.horizontal_align,
+           state.vertical_align
          ) do
       {:ok, native_state} ->
         state = %{state | native_state: native_state}
