@@ -7,7 +7,6 @@ defmodule TextOverlay.NativeTest do
   @tag :tmp_dir
   test "overlay text over raw video frame", %{tmp_dir: tmp_dir} do
     {in_path, out_path, ref_path} = Helpers.prepare_paths("1frame.yuv", "ref-native.yuv", tmp_dir)
-
     assert {:ok, frame} = File.read(in_path)
 
     assert {:ok, ref} =
@@ -31,9 +30,10 @@ defmodule TextOverlay.NativeTest do
     on_exit(fn -> File.close(file) end)
 
     IO.binwrite(file, out_frame)
+    reference_input_path = "../fixtures/1frame.h264" |> Path.expand(__DIR__)
 
     Helpers.create_ffmpeg_reference(
-      "1frame.h264",
+      reference_input_path,
       ref_path,
       "drawtext=text=mtext:fontcolor=white:y=w/100:x=(w-text_w)/2"
     )

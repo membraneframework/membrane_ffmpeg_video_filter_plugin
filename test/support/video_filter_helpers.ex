@@ -5,17 +5,15 @@ defmodule VideoFilter.Helpers do
   require Membrane.Logger
 
   @spec prepare_paths(binary(), binary(), binary()) :: {binary(), binary(), binary()}
-  def prepare_paths(input_file, ref_file, tmp_dir) do
-    in_path = "../fixtures/#{input_file}" |> Path.expand(__DIR__)
-    ref_path = "../fixtures/#{ref_file}" |> Path.expand(__DIR__)
-    out_path = Path.join(tmp_dir, ref_file)
+  def prepare_paths(input_file_name, ref_file_name, tmp_dir) do
+    in_path = "../fixtures/#{input_file_name}" |> Path.expand(__DIR__)
+    ref_path = Path.join(tmp_dir, ref_file_name)
+    out_path = Path.join(tmp_dir, "out-#{ref_file_name}")
     {in_path, out_path, ref_path}
   end
 
   @spec create_ffmpeg_reference(binary, binary, binary) :: nil | :ok
-  def create_ffmpeg_reference(input_file, output_reference_path, filter_descr) do
-    full_input_path = "../fixtures/#{input_file}" |> Path.expand(__DIR__)
-
+  def create_ffmpeg_reference(input_path, output_reference_path, filter_descr) do
     {result, exit_status} =
       System.cmd(
         "ffmpeg",
@@ -23,7 +21,7 @@ defmodule VideoFilter.Helpers do
           # overrides the output file without asking if it already exists
           "-y",
           "-i",
-          full_input_path,
+          input_path,
           "-vf",
           filter_descr,
           output_reference_path

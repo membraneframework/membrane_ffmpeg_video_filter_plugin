@@ -8,13 +8,25 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
   Additionally, the element has to receive proper caps with picture format and dimensions.
   """
   use Membrane.Filter
+
+  require Membrane.Logger
+
   alias __MODULE__.Native
-  alias Membrane.Buffer
   alias Membrane.Caps.Video.Raw
 
   def_options text: [
                 type: :binary,
-                description: "Text to be displayed on video"
+                description:
+                  "Text to be displayed on video. Either text or text_intervals must be provided",
+                default: nil
+              ],
+              text_intervals: [
+                type: :list,
+                spec: [{{Time.t(), Time.t() | :infinity}, String.t()}],
+                description:
+                  "List of time intervals when each given text should appear. Intervals should not overlap.
+                Either text or text_intervals must be provided",
+                default: []
               ],
               fontsize: [
                 type: :int,
@@ -48,13 +60,13 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
                 description: "Set to true to display a gray border around letters",
                 default: false
               ],
-              vertical_align: [
+              horizontal_align: [
                 type: :atom,
                 spec: :left | :right | :center,
                 description: "Horizontal position of the displayed text",
                 default: :left
               ],
-              horizontal_align: [
+              vertical_align: [
                 type: :atom,
                 spec: :top | :bottom | :center,
                 description: "Vertical position of the displayed text",
@@ -70,12 +82,33 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
 
   @impl true
   def handle_init(options) do
+    text_intervals = convert_to_text_intervals(options)
+
     state =
       options
       |> Map.from_struct()
+      |> Map.delete(:text)
+      |> Map.put(:text_intervals, text_intervals)
       |> Map.put(:native_state, nil)
 
     {:ok, state}
+  end
+
+  defp convert_to_text_intervals(%{text: nil, text_intervals: []}) do
+    Membrane.Logger.warn("No text or text_intervals provided, no text will be added to video")
+    []
+  end
+
+  defp convert_to_text_intervals(%{text: nil, text_intervals: text_intervals}) do
+    text_intervals
+  end
+
+  defp convert_to_text_intervals(%{text: text, text_intervals: []}) do
+    [{{0, :infinity}, text}]
+  end
+
+  defp convert_to_text_intervals(%{text: _text, text_intervals: _text_intervals}) do
+    raise("Both 'text' and 'text_intervals' have been provided - choose one input method.")
   end
 
   @impl true
@@ -90,50 +123,93 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
   end
 
   @impl true
-  def handle_caps(
-        :input,
-        %Raw{format: format, width: width, height: height} = caps,
-        _context,
-        state
-      ) do
+  def handle_caps(:input, caps, _context, state) do
+    state = init_new_filter_if_needed(caps, state)
+    {{:ok, caps: {:output, caps}, redemand: :output}, state}
+  end
+
+  @impl true
+  def handle_process(:input, buffer, ctx, state) do
+    {buffer, state} = apply_filter_if_needed(buffer, ctx, state)
+    {{:ok, [buffer: {:output, buffer}]}, state}
+  end
+
+  # no text left to render
+  defp apply_filter_if_needed(buffer, _ctx, %{text_intervals: []} = state) do
+    {buffer, state}
+  end
+
+  defp apply_filter_if_needed(
+         %{metadata: metadata} = buffer,
+         ctx,
+         %{native_state: native_state, text_intervals: [{interval, _text} | streams]} = state
+       ) do
+    cond do
+      frame_before_interval?(metadata, interval) ->
+        {buffer, state}
+
+      frame_after_interval?(metadata, interval) ->
+        state = %{state | text_intervals: streams}
+        state = init_new_filter_if_needed(ctx.pads.input.caps, state)
+        apply_filter_if_needed(buffer, ctx, state)
+
+      frame_in_interval?(metadata, interval) ->
+        buffer = Native.apply_filter!(buffer, native_state)
+        {buffer, state}
+    end
+  end
+
+  defp init_new_filter_if_needed(_caps, %{text_intervals: []} = state), do: state
+
+  defp init_new_filter_if_needed(caps, %{text_intervals: [stream | _streams]} = state) do
+    {_interval, text} = stream
+
     case Native.create(
-           state.text,
-           width,
-           height,
-           format,
+           text,
+           caps.width,
+           caps.height,
+           caps.format,
            state.fontsize,
            state.box?,
            state.boxcolor,
            state.border?,
            state.fontcolor,
            fontfile_to_native_format(state.fontfile),
-           state.vertical_align,
-           state.horizontal_align
+           state.horizontal_align,
+           state.vertical_align
          ) do
       {:ok, native_state} ->
-        state = %{state | native_state: native_state}
-        {{:ok, caps: {:output, caps}, redemand: :output}, state}
+        %{state | native_state: native_state}
 
       {:error, reason} ->
         raise inspect(reason)
     end
   end
 
-  @impl true
-  def handle_process(
-        :input,
-        %Buffer{payload: payload} = buffer,
-        _ctx,
-        %{native_state: native_state} = state
-      ) do
-    case Native.apply_filter(payload, native_state) do
-      {:ok, frame} ->
-        buffer = [buffer: {:output, %{buffer | payload: frame}}]
-        {{:ok, buffer}, state}
+  defp frame_before_interval?(metadata, {from, _to}) do
+    pts = get_pts(metadata)
+    pts < from
+  end
 
-      {:error, reason} ->
-        raise inspect(reason)
-    end
+  defp frame_after_interval?(_metadata, {_from, :infinity}), do: false
+
+  defp frame_after_interval?(metadata, {_from, to}) do
+    pts = get_pts(metadata)
+    pts >= to
+  end
+
+  defp frame_in_interval?(metadata, {from, :infinity}) do
+    pts = get_pts(metadata)
+    pts >= from
+  end
+
+  defp frame_in_interval?(metadata, {from, to}) do
+    pts = get_pts(metadata)
+    pts < to and pts >= from
+  end
+
+  defp get_pts(metadata) do
+    max(Ratio.floor(metadata.pts), 0)
   end
 
   @impl true

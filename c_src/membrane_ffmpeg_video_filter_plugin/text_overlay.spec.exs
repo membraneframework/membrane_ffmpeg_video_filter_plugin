@@ -14,8 +14,8 @@ spec(
     border :: bool,
     fontcolor :: string,
     fontfile :: string,
-    vertical_align :: atom,
-    horizontal_align :: atom
+    horizontal_align :: atom,
+    vertical_align :: atom
   ) :: {:ok :: label, state} | {:error :: label, reason :: atom}
 )
 
