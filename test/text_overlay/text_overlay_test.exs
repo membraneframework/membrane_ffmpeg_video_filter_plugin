@@ -28,7 +28,7 @@ defmodule TextOverlay.TextOverlayTest do
     Pipeline.stop_and_terminate(pid, blocking?: true)
 
     Helpers.create_ffmpeg_reference(
-      "2s_8fps.h264",
+      in_path,
       ref_path,
       "drawtext=text='Some very long text':x=w/100:y=(h-text_h)-w/100"
     )
@@ -61,7 +61,7 @@ defmodule TextOverlay.TextOverlayTest do
     Pipeline.stop_and_terminate(pid, blocking?: true)
 
     Helpers.create_ffmpeg_reference(
-      "2s_8fps.h264",
+      in_path,
       ref_path,
       "drawtext=text='My text':x=(w-text_w)/2:y=(h-text_h)/2"
     )
@@ -98,7 +98,7 @@ defmodule TextOverlay.TextOverlayTest do
     Pipeline.stop_and_terminate(pid, blocking?: true)
 
     Helpers.create_ffmpeg_reference(
-      "2s_8fps.h264",
+      in_path,
       ref_path,
       "drawtext=text='My text':fontcolor=white:box=1:boxcolor=orange:borderw=1:bordercolor=DarkGray:fontsize=35:x=(w-text_w)/2:y=w/100"
     )
@@ -136,7 +136,7 @@ defmodule TextOverlay.TextOverlayTest do
     Pipeline.stop_and_terminate(pid, blocking?: true)
 
     Helpers.create_ffmpeg_reference(
-      "4s_2fps.h264",
+      in_path,
       ref_path,
       "drawtext=text='some text':fontcolor=white:fontsize=35:x=(w-text_w)/2:y=w/100:enable='between(t,1,1.5)'"
     )
@@ -174,7 +174,7 @@ defmodule TextOverlay.TextOverlayTest do
     Pipeline.stop_and_terminate(pid, blocking?: true)
 
     Helpers.create_ffmpeg_reference(
-      "3s_9fps.h264",
+      in_path,
       ref_path,
       "drawtext=text='some text':fontcolor=white:fontsize=35:x=(w-text_w)/2:y=w/100:enable='between(t,0.9,1.9)'"
     )
