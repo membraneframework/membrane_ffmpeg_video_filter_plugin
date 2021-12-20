@@ -17,15 +17,15 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
   def_options text: [
                 type: :binary,
                 description:
-                  "Text to be displayed on video. Either text or text_stream must be provided",
+                  "Text to be displayed on video. Either text or text_intervals must be provided",
                 default: nil
               ],
-              text_stream: [
+              text_intervals: [
                 type: :list,
-                spec: [{{Time.t(), Time.t() | :infinity}, binary()}],
+                spec: [{{Time.t(), Time.t() | :infinity}, String.t()}],
                 description:
                   "List of time intervals when each given text should appear. Intervals should not overlap.
-                Either text or text_stream must be provided",
+                Either text or text_intervals must be provided",
                 default: []
               ],
               fontsize: [
@@ -82,33 +82,33 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
 
   @impl true
   def handle_init(options) do
-    text_stream = convert_to_text_stream(options)
+    text_intervals = convert_to_text_intervals(options)
 
     state =
       options
       |> Map.from_struct()
       |> Map.delete(:text)
-      |> Map.put(:text_stream, text_stream)
+      |> Map.put(:text_intervals, text_intervals)
       |> Map.put(:native_state, nil)
 
     {:ok, state}
   end
 
-  defp convert_to_text_stream(%{text: nil, text_stream: []}) do
-    Membrane.Logger.warn("No text or text_stream provided, no text will be added to video")
+  defp convert_to_text_intervals(%{text: nil, text_intervals: []}) do
+    Membrane.Logger.warn("No text or text_intervals provided, no text will be added to video")
     []
   end
 
-  defp convert_to_text_stream(%{text: nil, text_stream: text_stream}) do
-    text_stream
+  defp convert_to_text_intervals(%{text: nil, text_intervals: text_intervals}) do
+    text_intervals
   end
 
-  defp convert_to_text_stream(%{text: text, text_stream: []}) do
+  defp convert_to_text_intervals(%{text: text, text_intervals: []}) do
     [{{0, :infinity}, text}]
   end
 
-  defp convert_to_text_stream(%{text: _text, text_stream: _text_stream}) do
-    raise("Both 'text' and 'text_stream' have been provided - choose one input method.")
+  defp convert_to_text_intervals(%{text: _text, text_intervals: _text_intervals}) do
+    raise("Both 'text' and 'text_intervals' have been provided - choose one input method.")
   end
 
   @impl true
@@ -135,38 +135,33 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
   end
 
   # no text left to render
-  defp apply_filter_if_needed(buffer, _ctx, %{text_stream: []} = state) do
+  defp apply_filter_if_needed(buffer, _ctx, %{text_intervals: []} = state) do
     {buffer, state}
   end
 
   defp apply_filter_if_needed(
-         %{metadata: metadata, payload: payload} = buffer,
+         %{metadata: metadata} = buffer,
          ctx,
-         %{native_state: native_state, text_stream: [{interval, _text} | streams]} = state
+         %{native_state: native_state, text_intervals: [{interval, _text} | streams]} = state
        ) do
     cond do
       frame_before_interval?(metadata, interval) ->
         {buffer, state}
 
       frame_after_interval?(metadata, interval) ->
-        state = %{state | text_stream: streams}
+        state = %{state | text_intervals: streams}
         state = init_new_filter_if_needed(ctx.pads.input.caps, state)
         apply_filter_if_needed(buffer, ctx, state)
 
       frame_in_interval?(metadata, interval) ->
-        case Native.apply_filter(payload, native_state) do
-          {:ok, frame} ->
-            {%{buffer | payload: frame}, state}
-
-          {:error, reason} ->
-            raise inspect(reason)
-        end
+        buffer = Native.apply_filter!(buffer, native_state)
+        {buffer, state}
     end
   end
 
-  defp init_new_filter_if_needed(_caps, %{text_stream: []} = state), do: state
+  defp init_new_filter_if_needed(_caps, %{text_intervals: []} = state), do: state
 
-  defp init_new_filter_if_needed(caps, %{text_stream: [stream | _streams]} = state) do
+  defp init_new_filter_if_needed(caps, %{text_intervals: [stream | _streams]} = state) do
     {_interval, text} = stream
 
     case Native.create(
