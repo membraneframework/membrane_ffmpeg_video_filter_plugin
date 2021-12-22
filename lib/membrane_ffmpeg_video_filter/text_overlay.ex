@@ -13,6 +13,7 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
 
   alias __MODULE__.Native
   alias Membrane.Caps.Video.Raw
+  alias Membrane.Buffer
 
   def_options text: [
                 type: :binary,
@@ -140,20 +141,20 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
   end
 
   defp apply_filter_if_needed(
-         %{metadata: metadata} = buffer,
+         buffer,
          ctx,
-         %{native_state: native_state, text_intervals: [{interval, _text} | streams]} = state
+         %{native_state: native_state, text_intervals: [{interval, _text} | intervals]} = state
        ) do
     cond do
-      frame_before_interval?(metadata, interval) ->
+      frame_before_interval?(buffer, interval) ->
         {buffer, state}
 
-      frame_after_interval?(metadata, interval) ->
-        state = %{state | text_intervals: streams}
+      frame_after_interval?(buffer, interval) ->
+        state = %{state | text_intervals: intervals}
         state = init_new_filter_if_needed(ctx.pads.input.caps, state)
         apply_filter_if_needed(buffer, ctx, state)
 
-      frame_in_interval?(metadata, interval) ->
+      frame_in_interval?(buffer, interval) ->
         buffer = Native.apply_filter!(buffer, native_state)
         {buffer, state}
     end
@@ -161,8 +162,8 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
 
   defp init_new_filter_if_needed(_caps, %{text_intervals: []} = state), do: state
 
-  defp init_new_filter_if_needed(caps, %{text_intervals: [stream | _streams]} = state) do
-    {_interval, text} = stream
+  defp init_new_filter_if_needed(caps, %{text_intervals: [text_interval | _intervals]} = state) do
+    {_interval, text} = text_interval
 
     case Native.create(
            text,
@@ -186,30 +187,22 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
     end
   end
 
-  defp frame_before_interval?(metadata, {from, _to}) do
-    pts = get_pts(metadata)
+  defp frame_before_interval?(%Buffer{pts: pts}, {from, _to}) do
     pts < from
   end
 
-  defp frame_after_interval?(_metadata, {_from, :infinity}), do: false
+  defp frame_after_interval?(_buffer, {_from, :infinity}), do: false
 
-  defp frame_after_interval?(metadata, {_from, to}) do
-    pts = get_pts(metadata)
+  defp frame_after_interval?(%Buffer{pts: pts}, {_from, to}) do
     pts >= to
   end
 
-  defp frame_in_interval?(metadata, {from, :infinity}) do
-    pts = get_pts(metadata)
+  defp frame_in_interval?(%Buffer{pts: pts}, {from, :infinity}) do
     pts >= from
   end
 
-  defp frame_in_interval?(metadata, {from, to}) do
-    pts = get_pts(metadata)
+  defp frame_in_interval?(%Buffer{pts: pts}, {from, to}) do
     pts < to and pts >= from
-  end
-
-  defp get_pts(metadata) do
-    max(Ratio.floor(metadata.pts), 0)
   end
 
   @impl true
