@@ -18,7 +18,7 @@ The package can be installed by adding `membrane_ffmpeg_video_filter_plugin` to 
 ```elixir
 def deps do
   [
-    {:membrane_ffmpeg_video_filter_plugin, "~> 0.2.0"}
+    {:membrane_ffmpeg_video_filter_plugin, "~> 0.2.1"}
   ]
 end
 ```
@@ -68,10 +68,10 @@ defmodule VideoFilter.Pipeline do
 end
 ```
 
-Frame from original video:  
-![input](readme/input.png)  
-Output frame with filter applied:  
-![output](readme/output.png)  
+Frame from original video:
+![input](readme/input.png)
+Output frame with filter applied:
+![output](readme/output.png)
 
 ## Copyright and License
 
