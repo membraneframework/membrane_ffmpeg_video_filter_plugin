@@ -130,6 +130,24 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
   end
 
   @impl true
+  def handle_process(
+        :input,
+        %Buffer{pts: nil} = buffer,
+        _ctx,
+        %{text_intervals: intervals} = state
+      ) do
+    case intervals do
+      [{{0, :infinity}, _text}] ->
+        buffer = Native.apply_filter!(buffer, state.native_state)
+        {{:ok, [buffer: {:output, buffer}]}, state}
+
+      _intervals ->
+        raise(
+          "Received stream without pts - cannot apply filter according to provided `text_intervals`"
+        )
+    end
+  end
+
   def handle_process(:input, buffer, ctx, state) do
     {buffer, state} = apply_filter_if_needed(buffer, ctx, state)
     {{:ok, [buffer: {:output, buffer}]}, state}

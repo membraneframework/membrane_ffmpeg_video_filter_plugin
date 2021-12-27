@@ -43,7 +43,7 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
       {:membrane_h264_ffmpeg_plugin, "~> 0.16.1", only: [:dev, :test]},
       {:ex_doc, "~> 0.24", only: :dev, runtime: false},
       {:dialyxir, "~> 1.1", only: :dev, runtime: false},
-      {:credo, "~> 1.6.1", only: :dev, runtime: false}
+      {:credo, "~> 1.6", only: :dev, runtime: false}
     ]
   end
 
