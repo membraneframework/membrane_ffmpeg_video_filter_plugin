@@ -139,7 +139,7 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
     case intervals do
       [{{0, :infinity}, _text}] ->
         buffer = Native.apply_filter!(buffer, state.native_state)
-        {{:ok, [buffer: {:output, buffer}]}, state}
+        {{:ok, buffer: {:output, buffer}}, state}
 
       _intervals ->
         raise(
