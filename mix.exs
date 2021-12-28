@@ -1,7 +1,7 @@
 defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
   use Mix.Project
 
-  @version "0.2.1"
+  @version "0.3.0"
   @github_url "https://github.com/membraneframework/membrane_ffmpeg_video_filter_plugin"
 
   def project do
