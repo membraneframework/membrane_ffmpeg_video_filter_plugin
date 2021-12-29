@@ -8,12 +8,12 @@ spec create(
        height :: int,
        pixel_format_name :: atom,
        fontsize :: int,
+       fontcolor :: string,
+       fontfile :: string,
        box :: bool,
        boxcolor :: string,
        borderw :: int,
        bordercolor :: string,
-       fontcolor :: string,
-       fontfile :: string,
        horizontal_align :: atom,
        vertical_align :: atom
      ) :: {:ok :: label, state} | {:error :: label, reason :: atom}

@@ -194,12 +194,12 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
            caps.height,
            caps.format,
            state.fontsize,
+           state.fontcolor,
+           fontfile_to_native_format(state.fontfile),
            state.box?,
            state.box_color,
            state.border_width,
            state.border_color,
-           state.fontcolor,
-           fontfile_to_native_format(state.fontfile),
            state.horizontal_align,
            state.vertical_align
          ) do

@@ -3,15 +3,15 @@
 int get_pixel_format(char *fmt_name);
 static int init_filters(const char *filters_descr, State *state);
 void create_filter_description(char *filter_descr, int len, char *text,
-                               int fontsize, int box, char *boxcolor,
-                               int borderw, char *bordercolor, char *fontcolor,
-                               char *fontfile, char *horizontal_align,
+                               int fontsize, char *fontcolor, char *fontfile,
+                               int box, char *boxcolor, int borderw,
+                               char *bordercolor, char *horizontal_align,
                                char *vertical_align);
 
 UNIFEX_TERM create(UnifexEnv *env, char *text, int width, int height,
-                   char *pixel_format_name, int fontsize, int box,
-                   char *boxcolor, int borderw, char *bordercolor,
-                   char *fontcolor, char *fontfile, char *horizontal_align,
+                   char *pixel_format_name, int fontsize, char *fontcolor,
+                   char *fontfile, int box, char *boxcolor, int borderw,
+                   char *bordercolor, char *horizontal_align,
                    char *vertical_align) {
 
   UNIFEX_TERM result;
@@ -27,8 +27,8 @@ UNIFEX_TERM create(UnifexEnv *env, char *text, int width, int height,
   state->pixel_format = pix_fmt;
 
   char filter_descr[512];
-  create_filter_description(filter_descr, 512, text, fontsize, box, boxcolor,
-                            borderw, bordercolor, fontcolor, fontfile,
+  create_filter_description(filter_descr, 512, text, fontsize, fontcolor,
+                            fontfile, box, boxcolor, borderw, bordercolor,
                             horizontal_align, vertical_align);
   if (init_filters(filter_descr, state) < 0) {
     result = create_result_error(env, "error_creating_filters");
@@ -110,9 +110,9 @@ int get_pixel_format(char *fmt_name) {
 }
 
 void create_filter_description(char *filter_descr, int len, char *text,
-                               int fontsize, int box, char *boxcolor,
-                               int borderw, char *bordercolor, char *fontcolor,
-                               char *fontfile, char *horizontal_align,
+                               int fontsize, char *fontcolor, char *fontfile,
+                               int box, char *boxcolor, int borderw,
+                               char *bordercolor, char *horizontal_align,
                                char *vertical_align) {
   filter_descr += snprintf(filter_descr, len, "drawtext=text=%s", text);
   if (fontsize != -1) {
