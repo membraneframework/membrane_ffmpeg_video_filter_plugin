@@ -83,9 +83,9 @@ defmodule TextOverlay.TextOverlayTest do
                    text: "My text",
                    fontsize: 35,
                    fontcolor: "white",
-                   border?: true,
+                   border_width: 1,
                    box?: true,
-                   boxcolor: "orange",
+                   box_color: "orange",
                    horizontal_align: :center,
                    vertical_align: :top
                  },
@@ -100,7 +100,7 @@ defmodule TextOverlay.TextOverlayTest do
     Helpers.create_ffmpeg_reference(
       in_path,
       ref_path,
-      "drawtext=text='My text':fontcolor=white:box=1:boxcolor=orange:borderw=1:bordercolor=DarkGray:fontsize=35:x=(w-text_w)/2:y=w/100"
+      "drawtext=text='My text':fontcolor=white:box=1:boxcolor=orange:borderw=1:bordercolor=black:fontsize=35:x=(w-text_w)/2:y=w/100"
     )
 
     Helpers.compare_contents(out_path, ref_path)

@@ -4,13 +4,15 @@ int get_pixel_format(char *fmt_name);
 static int init_filters(const char *filters_descr, State *state);
 void create_filter_description(char *filter_descr, int len, char *text,
                                int fontsize, int box, char *boxcolor,
-                               int border, char *fontcolor, char *fontfile,
-                               char *horizontal_align, char *vertical_align);
+                               int borderw, char *bordercolor, char *fontcolor,
+                               char *fontfile, char *horizontal_align,
+                               char *vertical_align);
 
 UNIFEX_TERM create(UnifexEnv *env, char *text, int width, int height,
                    char *pixel_format_name, int fontsize, int box,
-                   char *boxcolor, int border, char *fontcolor, char *fontfile,
-                   char *horizontal_align, char *vertical_align) {
+                   char *boxcolor, int borderw, char *bordercolor,
+                   char *fontcolor, char *fontfile, char *horizontal_align,
+                   char *vertical_align) {
 
   UNIFEX_TERM result;
   State *state = unifex_alloc_state(env);
@@ -26,8 +28,8 @@ UNIFEX_TERM create(UnifexEnv *env, char *text, int width, int height,
 
   char filter_descr[512];
   create_filter_description(filter_descr, 512, text, fontsize, box, boxcolor,
-                            border, fontcolor, fontfile, horizontal_align,
-                            vertical_align);
+                            borderw, bordercolor, fontcolor, fontfile,
+                            horizontal_align, vertical_align);
   if (init_filters(filter_descr, state) < 0) {
     result = create_result_error(env, "error_creating_filters");
     goto exit_create;
@@ -109,9 +111,9 @@ int get_pixel_format(char *fmt_name) {
 
 void create_filter_description(char *filter_descr, int len, char *text,
                                int fontsize, int box, char *boxcolor,
-                               int border, char *fontcolor, char *fontfile,
-                               char *horizontal_align, char *vertical_align) {
-
+                               int borderw, char *bordercolor, char *fontcolor,
+                               char *fontfile, char *horizontal_align,
+                               char *vertical_align) {
   filter_descr += snprintf(filter_descr, len, "drawtext=text=%s", text);
   if (fontsize != -1) {
     filter_descr += snprintf(filter_descr, len, ":fontsize=%d", fontsize);
@@ -128,9 +130,9 @@ void create_filter_description(char *filter_descr, int len, char *text,
   if (strcmp(fontfile, "") != 0) {
     filter_descr += snprintf(filter_descr, len, ":fontfile=%s", fontfile);
   }
-  if (border == 1) {
-    filter_descr +=
-        snprintf(filter_descr, len, ":bordercolor=DarkGray:borderw=1");
+  if (borderw > 0) {
+    filter_descr += snprintf(filter_descr, len, ":bordercolor=%s:borderw=%d",
+                             bordercolor, borderw);
   }
   if (strcmp(horizontal_align, "center") == 0) {
     filter_descr += snprintf(filter_descr, len, ":x=(w-text_w)/2");
