@@ -81,8 +81,8 @@ defmodule TextOverlay.TextOverlayTest do
                  decoder: Membrane.H264.FFmpeg.Decoder,
                  text_filter: %TextOverlay{
                    text: "My text",
-                   fontsize: 35,
-                   fontcolor: "white",
+                   font_size: 35,
+                   font_color: "white",
                    border_width: 1,
                    border_color: "red",
                    box?: true,
@@ -123,8 +123,8 @@ defmodule TextOverlay.TextOverlayTest do
                      {{Membrane.Time.milliseconds(1500), Membrane.Time.milliseconds(2000)},
                       "some text"}
                    ],
-                   fontsize: 35,
-                   fontcolor: "white",
+                   font_size: 35,
+                   font_color: "white",
                    horizontal_align: :center,
                    vertical_align: :top
                  },
@@ -161,8 +161,8 @@ defmodule TextOverlay.TextOverlayTest do
                      {{Membrane.Time.milliseconds(1000), Membrane.Time.milliseconds(2000)},
                       "some text"}
                    ],
-                   fontsize: 35,
-                   fontcolor: "white",
+                   font_size: 35,
+                   font_color: "white",
                    horizontal_align: :center,
                    vertical_align: :top
                  },
