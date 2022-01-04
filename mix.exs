@@ -35,12 +35,12 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
 
   defp deps do
     [
-      {:membrane_core, "~> 0.8.1"},
+      {:membrane_core, "~> 0.8.2"},
       {:membrane_caps_video_raw, "~> 0.1.0"},
       {:membrane_common_c, "~> 0.10.0"},
-      {:unifex, "0.7.0"},
+      {:unifex, "0.7.2"},
       {:membrane_file_plugin, "~> 0.7.0", only: [:dev, :test]},
-      {:membrane_h264_ffmpeg_plugin, "~> 0.16.1", only: [:dev, :test]},
+      {:membrane_h264_ffmpeg_plugin, "~> 0.16.3", only: [:dev, :test]},
       {:ex_doc, "~> 0.24", only: :dev, runtime: false},
       {:dialyxir, "~> 1.1", only: :dev, runtime: false},
       {:credo, "~> 1.6", only: :dev, runtime: false}

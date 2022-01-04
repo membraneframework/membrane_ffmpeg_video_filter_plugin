@@ -29,18 +29,18 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
                 Either text or text_intervals must be provided",
                 default: []
               ],
-              fontsize: [
+              font_size: [
                 type: :int,
                 description: "Size of the displayed font",
                 default: 12
               ],
-              fontcolor: [
+              font_color: [
                 type: :binary,
                 description:
                   "Choose font color according to the ffmpeg color syntax (https://ffmpeg.org/ffmpeg-utils.html#color-syntax)",
                 default: "black"
               ],
-              fontfile: [
+              font_file: [
                 type: :binary,
                 description:
                   "Path to the file with the desired font. If not set, default font fallback from fontconfig is used",
@@ -51,15 +51,20 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
                 description: "Set to true if a box is to be displayed behind the text",
                 default: false
               ],
-              boxcolor: [
+              box_color: [
                 type: :binary,
                 description: "If the box? is set to true, display a box in the given color",
                 default: "white"
               ],
-              border?: [
-                type: :boolean,
-                description: "Set to true to display a gray border around letters",
-                default: false
+              border_width: [
+                type: :int,
+                description: "Set the width of the border around the text",
+                default: 0
+              ],
+              border_color: [
+                type: :binary,
+                description: "Set the color of the border, if exists",
+                default: "black"
               ],
               horizontal_align: [
                 type: :atom,
@@ -188,12 +193,13 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
            caps.width,
            caps.height,
            caps.format,
-           state.fontsize,
+           state.font_size,
+           state.font_color,
+           font_file_to_native_format(state.font_file),
            state.box?,
-           state.boxcolor,
-           state.border?,
-           state.fontcolor,
-           fontfile_to_native_format(state.fontfile),
+           state.box_color,
+           state.border_width,
+           state.border_color,
            state.horizontal_align,
            state.vertical_align
          ) do
@@ -233,6 +239,6 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
     {:ok, %{state | native_state: nil}}
   end
 
-  defp fontfile_to_native_format(nil), do: ""
-  defp fontfile_to_native_format(fontfile), do: fontfile
+  defp font_file_to_native_format(nil), do: ""
+  defp font_file_to_native_format(font_file), do: font_file
 end

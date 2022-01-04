@@ -81,11 +81,12 @@ defmodule TextOverlay.TextOverlayTest do
                  decoder: Membrane.H264.FFmpeg.Decoder,
                  text_filter: %TextOverlay{
                    text: "My text",
-                   fontsize: 35,
-                   fontcolor: "white",
-                   border?: true,
+                   font_size: 35,
+                   font_color: "white",
+                   border_width: 1,
+                   border_color: "red",
                    box?: true,
-                   boxcolor: "orange",
+                   box_color: "orange",
                    horizontal_align: :center,
                    vertical_align: :top
                  },
@@ -100,7 +101,7 @@ defmodule TextOverlay.TextOverlayTest do
     Helpers.create_ffmpeg_reference(
       in_path,
       ref_path,
-      "drawtext=text='My text':fontcolor=white:box=1:boxcolor=orange:borderw=1:bordercolor=DarkGray:fontsize=35:x=(w-text_w)/2:y=w/100"
+      "drawtext=text='My text':fontcolor=white:box=1:boxcolor=orange:borderw=1:bordercolor=red:fontsize=35:x=(w-text_w)/2:y=w/100"
     )
 
     Helpers.compare_contents(out_path, ref_path)
@@ -122,8 +123,8 @@ defmodule TextOverlay.TextOverlayTest do
                      {{Membrane.Time.milliseconds(1500), Membrane.Time.milliseconds(2000)},
                       "some text"}
                    ],
-                   fontsize: 35,
-                   fontcolor: "white",
+                   font_size: 35,
+                   font_color: "white",
                    horizontal_align: :center,
                    vertical_align: :top
                  },
@@ -160,8 +161,8 @@ defmodule TextOverlay.TextOverlayTest do
                      {{Membrane.Time.milliseconds(1000), Membrane.Time.milliseconds(2000)},
                       "some text"}
                    ],
-                   fontsize: 35,
-                   fontcolor: "white",
+                   font_size: 35,
+                   font_color: "white",
                    horizontal_align: :center,
                    vertical_align: :top
                  },

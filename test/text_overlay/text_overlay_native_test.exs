@@ -16,10 +16,11 @@ defmodule TextOverlay.NativeTest do
                360,
                :I420,
                12,
-               false,
+               "white",
                "",
                false,
-               "white",
+               "",
+               0,
                "",
                :center,
                :top
