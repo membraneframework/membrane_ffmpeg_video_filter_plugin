@@ -3,15 +3,15 @@
 int get_pixel_format(char *fmt_name);
 static int init_filters(const char *filters_descr, State *state);
 void create_filter_description(char *filter_descr, int len, char *text,
-                               int fontsize, char *fontcolor, char *fontfile,
-                               int box, char *boxcolor, int borderw,
-                               char *bordercolor, char *horizontal_align,
+                               int font_size, char *font_color, char *font_file,
+                               int box, char *box_color, int border_width,
+                               char *border_color, char *horizontal_align,
                                char *vertical_align);
 
 UNIFEX_TERM create(UnifexEnv *env, char *text, int width, int height,
-                   char *pixel_format_name, int fontsize, char *fontcolor,
-                   char *fontfile, int box, char *boxcolor, int borderw,
-                   char *bordercolor, char *horizontal_align,
+                   char *pixel_format_name, int font_size, char *font_color,
+                   char *font_file, int box, char *box_color, int border_width,
+                   char *border_color, char *horizontal_align,
                    char *vertical_align) {
 
   UNIFEX_TERM result;
@@ -27,9 +27,9 @@ UNIFEX_TERM create(UnifexEnv *env, char *text, int width, int height,
   state->pixel_format = pix_fmt;
 
   char filter_descr[512];
-  create_filter_description(filter_descr, 512, text, fontsize, fontcolor,
-                            fontfile, box, boxcolor, borderw, bordercolor,
-                            horizontal_align, vertical_align);
+  create_filter_description(filter_descr, 512, text, font_size, font_color,
+                            font_file, box, box_color, border_width,
+                            border_color, horizontal_align, vertical_align);
   if (init_filters(filter_descr, state) < 0) {
     result = create_result_error(env, "error_creating_filters");
     goto exit_create;
@@ -110,29 +110,29 @@ int get_pixel_format(char *fmt_name) {
 }
 
 void create_filter_description(char *filter_descr, int len, char *text,
-                               int fontsize, char *fontcolor, char *fontfile,
-                               int box, char *boxcolor, int borderw,
-                               char *bordercolor, char *horizontal_align,
+                               int font_size, char *font_color, char *font_file,
+                               int box, char *box_color, int border_width,
+                               char *border_color, char *horizontal_align,
                                char *vertical_align) {
   filter_descr += snprintf(filter_descr, len, "drawtext=text=%s", text);
-  if (fontsize != -1) {
-    filter_descr += snprintf(filter_descr, len, ":fontsize=%d", fontsize);
+  if (font_size != -1) {
+    filter_descr += snprintf(filter_descr, len, ":fontsize=%d", font_size);
   }
   if (box != -1) {
     filter_descr += snprintf(filter_descr, len, ":box=%d", box);
   }
-  if (strcmp(boxcolor, "") != 0) {
-    filter_descr += snprintf(filter_descr, len, ":boxcolor=%s", boxcolor);
+  if (strcmp(box_color, "") != 0) {
+    filter_descr += snprintf(filter_descr, len, ":boxcolor=%s", box_color);
   }
-  if (strcmp(fontcolor, "") != 0) {
-    filter_descr += snprintf(filter_descr, len, ":fontcolor=%s", fontcolor);
+  if (strcmp(font_color, "") != 0) {
+    filter_descr += snprintf(filter_descr, len, ":fontcolor=%s", font_color);
   }
-  if (strcmp(fontfile, "") != 0) {
-    filter_descr += snprintf(filter_descr, len, ":fontfile=%s", fontfile);
+  if (strcmp(font_file, "") != 0) {
+    filter_descr += snprintf(filter_descr, len, ":fontfile=%s", font_file);
   }
-  if (borderw > 0) {
+  if (border_width > 0) {
     filter_descr += snprintf(filter_descr, len, ":bordercolor=%s:borderw=%d",
-                             bordercolor, borderw);
+                             border_color, border_width);
   }
   if (strcmp(horizontal_align, "center") == 0) {
     filter_descr += snprintf(filter_descr, len, ":x=(w-text_w)/2");
