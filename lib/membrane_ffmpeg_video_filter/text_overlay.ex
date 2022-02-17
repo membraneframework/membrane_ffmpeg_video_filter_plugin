@@ -80,10 +80,12 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
               ]
 
   def_input_pad :input,
+    demand_mode: :auto,
     demand_unit: :buffers,
     caps: {Raw, aligned: true}
 
   def_output_pad :output,
+    demand_mode: :auto,
     caps: {Raw, aligned: true}
 
   @impl true
@@ -118,20 +120,9 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
   end
 
   @impl true
-  def handle_demand(:output, _size, :buffers, _ctx, %{native_state: nil} = state) do
-    # Wait until we have native state (after receiving caps)
-    {:ok, state}
-  end
-
-  @impl true
-  def handle_demand(:output, size, :buffers, _ctx, state) do
-    {{:ok, demand: {:input, size}}, state}
-  end
-
-  @impl true
   def handle_caps(:input, caps, _context, state) do
     state = init_new_filter_if_needed(caps, state)
-    {{:ok, caps: {:output, caps}, redemand: :output}, state}
+    {{:ok, caps: {:output, caps}}, state}
   end
 
   @impl true
