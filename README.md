@@ -18,7 +18,7 @@ The package can be installed by adding `membrane_ffmpeg_video_filter_plugin` to 
 ```elixir
 def deps do
   [
-    {:membrane_ffmpeg_video_filter_plugin, "~> 0.6.0"}
+    {:membrane_ffmpeg_video_filter_plugin, "~> 0.6.1"}
   ]
 end
 ```
