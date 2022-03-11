@@ -1,7 +1,7 @@
 defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
   use Mix.Project
 
-  @version "0.5.0"
+  @version "0.6.0"
   @github_url "https://github.com/membraneframework/membrane_ffmpeg_video_filter_plugin"
 
   def project do
@@ -36,11 +36,13 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
   defp deps do
     [
       {:membrane_core, "~> 0.9.0"},
-      {:membrane_caps_video_raw, "~> 0.1.0"},
+      {:membrane_raw_video_format, "~> 0.2.0"},
       {:membrane_common_c, "~> 0.11.0"},
       {:unifex, "0.7.2"},
+      # Testing
       {:membrane_file_plugin, "~> 0.9", only: :test},
-      {:membrane_h264_ffmpeg_plugin, "~> 0.17", only: :test},
+      {:membrane_h264_ffmpeg_plugin, "~> 0.18", only: :test},
+      # Development
       {:ex_doc, "~> 0.28", only: :dev, runtime: false},
       {:dialyxir, "~> 1.1", only: :dev, runtime: false},
       {:credo, "~> 1.6", only: :dev, runtime: false}
@@ -68,6 +70,7 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
     [
       main: "readme",
       extras: ["README.md", "LICENSE"],
+      formatters: ["html"],
       source_ref: "v#{@version}",
       nest_modules_by_prefix: [Membrane.FFmpeg.VideoFilter]
     ]
