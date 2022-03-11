@@ -38,7 +38,7 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
       {:membrane_core, "~> 0.9.0"},
       {:membrane_raw_video_format, "~> 0.2.0"},
       {:membrane_common_c, "~> 0.11.0"},
-      {:unifex, "0.7.2"},
+      {:unifex, "~> 0.7.2"},
       # Testing
       {:membrane_file_plugin, "~> 0.9", only: :test},
       {:membrane_h264_ffmpeg_plugin, "~> 0.18", only: :test},
