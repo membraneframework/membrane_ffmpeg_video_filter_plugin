@@ -12,8 +12,7 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
   require Membrane.Logger
 
   alias __MODULE__.Native
-  alias Membrane.Caps.Video.Raw
-  alias Membrane.Buffer
+  alias Membrane.{Buffer, RawVideo}
 
   def_options text: [
                 type: :binary,
@@ -82,11 +81,11 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
   def_input_pad :input,
     demand_mode: :auto,
     demand_unit: :buffers,
-    caps: {Raw, aligned: true}
+    caps: {RawVideo, aligned: true}
 
   def_output_pad :output,
     demand_mode: :auto,
-    caps: {Raw, aligned: true}
+    caps: {RawVideo, aligned: true}
 
   @impl true
   def handle_init(options) do
@@ -183,7 +182,7 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
            text,
            caps.width,
            caps.height,
-           caps.format,
+           caps.pixel_format,
            state.font_size,
            state.font_color,
            font_file_to_native_format(state.font_file),
