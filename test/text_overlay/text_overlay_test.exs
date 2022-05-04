@@ -23,9 +23,8 @@ defmodule TextOverlay.TextOverlayTest do
                ]
              })
 
-    assert Pipeline.play(pid) == :ok
     assert_end_of_stream(pid, :sink, :input, 4000)
-    Pipeline.stop_and_terminate(pid, blocking?: true)
+    Pipeline.terminate(pid, blocking?: true)
 
     Helpers.create_ffmpeg_reference(
       in_path,
@@ -56,9 +55,8 @@ defmodule TextOverlay.TextOverlayTest do
                ]
              })
 
-    assert Pipeline.play(pid) == :ok
     assert_end_of_stream(pid, :sink, :input, 4000)
-    Pipeline.stop_and_terminate(pid, blocking?: true)
+    Pipeline.terminate(pid, blocking?: true)
 
     Helpers.create_ffmpeg_reference(
       in_path,
@@ -94,9 +92,8 @@ defmodule TextOverlay.TextOverlayTest do
                ]
              })
 
-    assert Pipeline.play(pid) == :ok
     assert_end_of_stream(pid, :sink, :input, 4000)
-    Pipeline.stop_and_terminate(pid, blocking?: true)
+    Pipeline.terminate(pid, blocking?: true)
 
     Helpers.create_ffmpeg_reference(
       in_path,
@@ -132,9 +129,8 @@ defmodule TextOverlay.TextOverlayTest do
                ]
              })
 
-    assert Pipeline.play(pid) == :ok
     assert_end_of_stream(pid, :sink, :input, 4000)
-    Pipeline.stop_and_terminate(pid, blocking?: true)
+    Pipeline.terminate(pid, blocking?: true)
 
     Helpers.create_ffmpeg_reference(
       in_path,
@@ -170,9 +166,8 @@ defmodule TextOverlay.TextOverlayTest do
                ]
              })
 
-    assert Pipeline.play(pid) == :ok
     assert_end_of_stream(pid, :sink, :input, 4000)
-    Pipeline.stop_and_terminate(pid, blocking?: true)
+    Pipeline.terminate(pid, blocking?: true)
 
     Helpers.create_ffmpeg_reference(
       in_path,
