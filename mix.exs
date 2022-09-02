@@ -14,6 +14,7 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
+      diayzer: dialyzer(),
       description:
         "Plugin for applying video filters using [FFmpeg](https://www.ffmpeg.org/) library",
       package: package(),
@@ -60,6 +61,19 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
       files: ["lib", "mix.exs", "README*", "LICENSE*", ".formatter.exs", "bundlex.exs", "c_src"],
       exclude_patterns: [~r"c_src/.*/_generated.*"]
     ]
+  end
+
+  defp dialyzer() do
+    opts = [
+      flags: [:error_handling]
+    ]
+
+    if System.get_env("CI") == "true" do
+      # Store PLTs in cacheable directory for CI
+      [plt_local_path: "priv/plts", plt_core_path: "priv/plts"] ++ opts
+    else
+      opts
+    end
   end
 
   defp aliases do
