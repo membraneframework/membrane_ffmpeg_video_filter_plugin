@@ -107,6 +107,9 @@ defmodule TextOverlay.TextOverlayTest do
     {in_path, out_path, ref_path} =
       Helpers.prepare_paths("4s_2fps.h264", "ref-intervals.yuv", tmp_dir)
 
+    start_sec = 1.5
+    end_sec = 2.0
+
     pipeline =
       Pipeline.start_link_supervised!(
         structure: [
@@ -117,9 +120,9 @@ defmodule TextOverlay.TextOverlayTest do
             :text_filter,
             %TextOverlay{
               text_intervals: [
-                {{Membrane.Time.milliseconds(1000), Membrane.Time.milliseconds(1500 + 1)},
-                 "some text"}
-              ],
+                 {{Membrane.Time.milliseconds(trunc(start_sec * 1000)),
+                   Membrane.Time.milliseconds(trunc(end_sec * 1000))}, "some text"}
+               ],
               font_size: 35,
               font_color: "white",
               horizontal_align: :center,
@@ -135,7 +138,7 @@ defmodule TextOverlay.TextOverlayTest do
     Helpers.create_ffmpeg_reference(
       in_path,
       ref_path,
-      "drawtext=text='some text':fontcolor=white:fontsize=35:x=(w-text_w)/2:y=w/100:enable='between(t,1,1.50)'"
+      "drawtext=text='some text':fontcolor=white:fontsize=35:x=(w-text_w)/2:y=w/100:enable='between(t,#{start_sec - 0.1},#{end_sec - 0.1})'"
     )
 
     Helpers.compare_contents(out_path, ref_path)
