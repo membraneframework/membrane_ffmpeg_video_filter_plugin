@@ -39,38 +39,32 @@ defmodule VideoFilter.Pipeline do
 
   @impl true
   def handle_init(_opts) do
-    children = %{
-      file_src: %Source{location: "input.h264"},
-      parser: %Parser{framerate: {10, 1}},
-      decoder: Decoder,
-      text_filter: %TextOverlay{
-        text: "John Doe",
-        x: :center,
-        fontsize: 25,
-        fontcolor: "white",
-        border?: true
-      },
-      encoder: Encoder,
-      file_sink: %Sink{location: "output.h264"}
-    }
-
-    links = [
-      link(:file_src)
-      |> to(:parser)
-      |> to(:decoder)
-      |> to(:text_filter)
-      |> to(:encoder)
-      |> to(:file_sink)
-    ]
-
-    {{:ok, spec: %ParentSpec{children: children, links: links}}, %{}}
+    structure = 
+      child(:file_src, %Source{location: "input.h264"}) 
+      |> child(:parser, %Parser{framerate: {10, 1}}) 
+      |> child(:decoder, Decoder) 
+      |> child(:text_filter, %TextOverlay{
+          text: "John Doe",
+          x: :center,
+          fontsize: 25,
+          fontcolor: "white",
+          border?: true
+        }
+      ) 
+      |> child(:encoder,  Encoder) 
+      |> child(:file_sink,  %Sink{location: "output.h264"})
+  
+    {[spec: structure], %{}}
   end
 end
 ```
 
 Frame from original video:
+
 ![input](readme/input.png)
+
 Output frame with filter applied:
+
 ![output](readme/output.png)
 
 ## Copyright and License
