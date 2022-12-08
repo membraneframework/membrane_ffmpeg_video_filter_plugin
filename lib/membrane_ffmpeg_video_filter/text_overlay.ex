@@ -5,7 +5,7 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
   Element allows for specifying most commonly used 'drawtext' settings (such as fontsize, fontcolor) through element options.
 
   The element expects each frame to be received in a separate buffer.
-  Additionally, the element has to receive proper caps with picture format and dimensions.
+  Additionally, the element has to receive proper stream format with picture format and dimensions.
   """
   use Membrane.Filter
 
@@ -81,11 +81,11 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
   def_input_pad :input,
     demand_mode: :auto,
     demand_unit: :buffers,
-    caps: {RawVideo, aligned: true}
+    accepted_format: %RawVideo{aligned: true}
 
   def_output_pad :output,
     demand_mode: :auto,
-    caps: {RawVideo, aligned: true}
+    accepted_format: %RawVideo{aligned: true}
 
   @impl true
   def handle_init(options) do
@@ -119,9 +119,9 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
   end
 
   @impl true
-  def handle_caps(:input, caps, _context, state) do
-    state = init_new_filter_if_needed(caps, state)
-    {{:ok, caps: {:output, caps}}, state}
+  def handle_stream_format(:input, stream_format, _context, state) do
+    state = init_new_filter_if_needed(stream_format, state)
+    {{:ok, stream_format: {:output, stream_format}}, state}
   end
 
   @impl true
@@ -164,7 +164,7 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
 
       frame_after_interval?(buffer, interval) ->
         state = %{state | text_intervals: intervals}
-        state = init_new_filter_if_needed(ctx.pads.input.caps, state)
+        state = init_new_filter_if_needed(ctx.pads.input.stream_format, state)
         apply_filter_if_needed(buffer, ctx, state)
 
       frame_in_interval?(buffer, interval) ->
@@ -173,16 +173,19 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
     end
   end
 
-  defp init_new_filter_if_needed(_caps, %{text_intervals: []} = state), do: state
+  defp init_new_filter_if_needed(_stream_format, %{text_intervals: []} = state), do: state
 
-  defp init_new_filter_if_needed(caps, %{text_intervals: [text_interval | _intervals]} = state) do
+  defp init_new_filter_if_needed(
+         stream_format,
+         %{text_intervals: [text_interval | _intervals]} = state
+       ) do
     {_interval, text} = text_interval
 
     case Native.create(
            text,
-           caps.width,
-           caps.height,
-           caps.pixel_format,
+           stream_format.width,
+           stream_format.height,
+           stream_format.pixel_format,
            state.font_size,
            state.font_color,
            font_file_to_native_format(state.font_file),
