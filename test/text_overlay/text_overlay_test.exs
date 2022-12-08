@@ -116,7 +116,7 @@ defmodule TextOverlay.TextOverlayTest do
             :text_filter,
             %TextOverlay{
               text_intervals: [
-                {{Membrane.Time.milliseconds(1500), Membrane.Time.milliseconds(2000)},
+                {{Membrane.Time.milliseconds(1000), Membrane.Time.milliseconds(2000)},
                  "some text"}
               ],
               font_size: 35,
