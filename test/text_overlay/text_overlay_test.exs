@@ -134,7 +134,7 @@ defmodule TextOverlay.TextOverlayTest do
     Helpers.create_ffmpeg_reference(
       in_path,
       ref_path,
-      "drawtext=text='some text':fontcolor=white:fontsize=35:x=(w-text_w)/2:y=w/100:enable='between(t,1,1.49)'"
+      "drawtext=text='some text':fontcolor=white:fontsize=35:x=(w-text_w)/2:y=w/100:enable='between(t,1,1.51)'"
     )
 
     Helpers.compare_contents(out_path, ref_path)
