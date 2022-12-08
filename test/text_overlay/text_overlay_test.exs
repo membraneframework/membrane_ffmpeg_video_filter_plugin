@@ -102,6 +102,7 @@ defmodule TextOverlay.TextOverlayTest do
   end
 
   @tag :tmp_dir
+  @tag :skip_ci
   test "apply text interval on the part of the video", %{tmp_dir: tmp_dir} do
     {in_path, out_path, ref_path} =
       Helpers.prepare_paths("4s_2fps.h264", "ref-intervals.yuv", tmp_dir)
