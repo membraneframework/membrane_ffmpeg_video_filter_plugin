@@ -120,9 +120,9 @@ defmodule TextOverlay.TextOverlayTest do
             :text_filter,
             %TextOverlay{
               text_intervals: [
-                 {{Membrane.Time.milliseconds(trunc(start_sec * 1000)),
-                   Membrane.Time.milliseconds(trunc(end_sec * 1000))}, "some text"}
-               ],
+                {{Membrane.Time.milliseconds(trunc(start_sec * 1000)),
+                  Membrane.Time.milliseconds(trunc(end_sec * 1000))}, "some text"}
+              ],
               font_size: 35,
               font_color: "white",
               horizontal_align: :center,
