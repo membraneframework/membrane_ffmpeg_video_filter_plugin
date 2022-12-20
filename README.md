@@ -18,7 +18,7 @@ The package can be installed by adding `membrane_ffmpeg_video_filter_plugin` to 
 ```elixir
 def deps do
   [
-	{:membrane_ffmpeg_video_filter_plugin, "~> 0.9.0"}
+	  {:membrane_ffmpeg_video_filter_plugin, "~> 0.9.0"}
   ]
 end
 ```
@@ -38,7 +38,7 @@ defmodule VideoFilter.Pipeline do
   alias Membrane.FFmpeg.VideoFilter.TextOverlay
 
   @impl true
-  def handle_init(_opts) do
+  def handle_init(_opts, _ctx) do
     structure = 
       child(:file_src, %Source{location: "input.h264"}) 
       |> child(:parser, %Parser{framerate: {10, 1}}) 
