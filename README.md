@@ -38,7 +38,7 @@ defmodule VideoFilter.Pipeline do
   alias Membrane.FFmpeg.VideoFilter.TextOverlay
 
   @impl true
-  def handle_init(_opts, _ctx) do
+  def handle_init(_ctx, _opts) do
     structure = 
       child(:file_src, %Source{location: "input.h264"}) 
       |> child(:parser, %Parser{framerate: {10, 1}}) 
