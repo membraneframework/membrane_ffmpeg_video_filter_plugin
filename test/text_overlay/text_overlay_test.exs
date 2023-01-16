@@ -101,6 +101,7 @@ defmodule TextOverlay.TextOverlayTest do
     Helpers.compare_contents(out_path, ref_path)
   end
 
+  # due to different FFMPeg versions, the output may differ slightly on the CI server
   @tag :tmp_dir
   @tag :skip_ci
   test "apply text interval on the part of the video", %{tmp_dir: tmp_dir} do
