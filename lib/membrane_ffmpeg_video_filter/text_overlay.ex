@@ -5,7 +5,7 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
   Element allows for specifying most commonly used 'drawtext' settings (such as fontsize, fontcolor) through element options.
 
   The element expects each frame to be received in a separate buffer.
-  Additionally, the element has to receive proper caps with picture format and dimensions.
+  Additionally, the element has to receive proper stream format with picture format and dimensions.
   """
   use Membrane.Filter
 
@@ -81,14 +81,14 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
   def_input_pad :input,
     demand_mode: :auto,
     demand_unit: :buffers,
-    caps: {RawVideo, aligned: true}
+    accepted_format: %RawVideo{aligned: true}
 
   def_output_pad :output,
     demand_mode: :auto,
-    caps: {RawVideo, aligned: true}
+    accepted_format: %RawVideo{aligned: true}
 
   @impl true
-  def handle_init(options) do
+  def handle_init(_ctx, options) do
     text_intervals = convert_to_text_intervals(options)
 
     state =
@@ -98,7 +98,7 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
       |> Map.put(:text_intervals, text_intervals)
       |> Map.put(:native_state, nil)
 
-    {:ok, state}
+    {[], state}
   end
 
   defp convert_to_text_intervals(%{text: nil, text_intervals: []}) do
@@ -115,13 +115,13 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
   end
 
   defp convert_to_text_intervals(%{text: _text, text_intervals: _text_intervals}) do
-    raise("Both 'text' and 'text_intervals' have been provided - choose one input method.")
+    raise "Both 'text' and 'text_intervals' have been provided - choose one input method."
   end
 
   @impl true
-  def handle_caps(:input, caps, _context, state) do
-    state = init_new_filter_if_needed(caps, state)
-    {{:ok, caps: {:output, caps}}, state}
+  def handle_stream_format(:input, stream_format, _context, state) do
+    state = init_new_filter_if_needed(stream_format, state)
+    {[stream_format: {:output, stream_format}], state}
   end
 
   @impl true
@@ -134,18 +134,16 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
     case intervals do
       [{{0, :infinity}, _text}] ->
         buffer = Native.apply_filter!(buffer, state.native_state)
-        {{:ok, buffer: {:output, buffer}}, state}
+        {[buffer: {:output, buffer}], state}
 
       _intervals ->
-        raise(
-          "Received stream without pts - cannot apply filter according to provided `text_intervals`"
-        )
+        raise "Received stream without pts - cannot apply filter according to provided `text_intervals`"
     end
   end
 
   def handle_process(:input, buffer, ctx, state) do
     {buffer, state} = apply_filter_if_needed(buffer, ctx, state)
-    {{:ok, [buffer: {:output, buffer}]}, state}
+    {[buffer: {:output, buffer}], state}
   end
 
   # no text left to render
@@ -164,7 +162,7 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
 
       frame_after_interval?(buffer, interval) ->
         state = %{state | text_intervals: intervals}
-        state = init_new_filter_if_needed(ctx.pads.input.caps, state)
+        state = init_new_filter_if_needed(ctx.pads.input.stream_format, state)
         apply_filter_if_needed(buffer, ctx, state)
 
       frame_in_interval?(buffer, interval) ->
@@ -173,16 +171,19 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
     end
   end
 
-  defp init_new_filter_if_needed(_caps, %{text_intervals: []} = state), do: state
+  defp init_new_filter_if_needed(_stream_format, %{text_intervals: []} = state), do: state
 
-  defp init_new_filter_if_needed(caps, %{text_intervals: [text_interval | _intervals]} = state) do
+  defp init_new_filter_if_needed(
+         stream_format,
+         %{text_intervals: [text_interval | _intervals]} = state
+       ) do
     {_interval, text} = text_interval
 
     case Native.create(
            text,
-           caps.width,
-           caps.height,
-           caps.pixel_format,
+           stream_format.width,
+           stream_format.height,
+           stream_format.pixel_format,
            state.font_size,
            state.font_color,
            font_file_to_native_format(state.font_file),
@@ -221,12 +222,7 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
 
   @impl true
   def handle_end_of_stream(:input, _context, state) do
-    {{:ok, end_of_stream: :output, notify: {:end_of_stream, :input}}, state}
-  end
-
-  @impl true
-  def handle_prepared_to_stopped(_context, state) do
-    {:ok, %{state | native_state: nil}}
+    {[end_of_stream: :output], state}
   end
 
   defp font_file_to_native_format(nil), do: ""
