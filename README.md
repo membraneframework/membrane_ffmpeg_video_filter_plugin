@@ -7,11 +7,25 @@
 This package contains elements providing video filters based on [ffmpeg video filter feature](https://ffmpeg.org/ffmpeg-filters.html#Video-Filters).
 
 Currently only the TextOverlay element is implemented, based on [ffmpeg drawtext filter](https://ffmpeg.org/ffmpeg-filters.html#drawtext-1).
-This element enables adding text on top of given raw video frames.  
+This element enables adding text on top of given raw video frames.
 
 PRs with the implementation of other video filters are welcome!
 
 ## Installation
+
+First, you need to install FFmpeg on your system:
+
+### macOS
+
+```shell
+brew install ffmpeg
+```
+
+### Ubuntu
+
+```shell
+sudo apt-get install ffmpeg
+```
 
 The package can be installed by adding `membrane_ffmpeg_video_filter_plugin` to your list of dependencies in `mix.exs`:
 
@@ -39,10 +53,10 @@ defmodule VideoFilter.Pipeline do
 
   @impl true
   def handle_init(_ctx, _opts) do
-    structure = 
-      child(:file_src, %Source{location: "input.h264"}) 
-      |> child(:parser, %Parser{framerate: {10, 1}}) 
-      |> child(:decoder, Decoder) 
+    structure =
+      child(:file_src, %Source{location: "input.h264"})
+      |> child(:parser, %Parser{framerate: {10, 1}})
+      |> child(:decoder, Decoder)
       |> child(:text_filter, %TextOverlay{
           text: "John Doe",
           x: :center,
@@ -50,10 +64,10 @@ defmodule VideoFilter.Pipeline do
           fontcolor: "white",
           border?: true
         }
-      ) 
-      |> child(:encoder,  Encoder) 
+      )
+      |> child(:encoder,  Encoder)
       |> child(:file_sink,  %Sink{location: "output.h264"})
-  
+
     {[spec: structure], %{}}
   end
 end
