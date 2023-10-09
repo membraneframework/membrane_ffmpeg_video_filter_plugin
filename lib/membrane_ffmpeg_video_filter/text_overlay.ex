@@ -102,7 +102,7 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
   end
 
   defp convert_to_text_intervals(%{text: nil, text_intervals: []}) do
-    Membrane.Logger.warn("No text or text_intervals provided, no text will be added to video")
+    Membrane.Logger.warning("No text or text_intervals provided, no text will be added to video")
     []
   end
 
