@@ -13,6 +13,16 @@ PRs with the implementation of other video filters are welcome!
 
 ## Installation
 
+The package can be installed by adding `membrane_ffmpeg_video_filter_plugin` to your list of dependencies in `mix.exs`:
+
+```elixir
+def deps do
+  [
+  	{:membrane_ffmpeg_video_filter_plugin, "~> 0.11.0"}
+  ]
+end
+```
+
 The precompiled builds of the [ffmpeg](https://www.ffmpeg.org) will be pulled and linked automatically. However, should there be any problems, consider installing it manually.
 
 ### Manual instalation of dependencies
@@ -33,16 +43,6 @@ sudo apt-get install ffmpeg
 
 ```shell
 pacman -S ffmpeg
-```
-
-The package can be installed by adding `membrane_ffmpeg_video_filter_plugin` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-  	{:membrane_ffmpeg_video_filter_plugin, "~> 0.11.0"}
-  ]
-end
 ```
 
 ## Usage
