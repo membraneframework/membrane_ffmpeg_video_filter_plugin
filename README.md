@@ -13,15 +13,17 @@ PRs with the implementation of other video filters are welcome!
 
 ## Installation
 
-First, you need to install FFmpeg on your system:
+The precompiled builds of the [ffmpeg](https://www.ffmpeg.org) will be pulled and linked automatically. However, should there be any problems, consider installing it manually.
 
-### macOS
+### Manual instalation of dependencies
+
+#### macOS
 
 ```shell
 brew install ffmpeg
 ```
 
-### Ubuntu
+#### Ubuntu
 
 ```shell
 sudo apt-get install ffmpeg
@@ -32,7 +34,7 @@ The package can be installed by adding `membrane_ffmpeg_video_filter_plugin` to 
 ```elixir
 def deps do
   [
-  	{:membrane_ffmpeg_video_filter_plugin, "~> 0.10.0"}
+  	{:membrane_ffmpeg_video_filter_plugin, "~> 0.11.0"}
   ]
 end
 ```
