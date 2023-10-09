@@ -29,6 +29,12 @@ brew install ffmpeg
 sudo apt-get install ffmpeg
 ```
 
+#### Arch / Manjaro
+
+```shell
+pacman -S ffmpeg
+```
+
 The package can be installed by adding `membrane_ffmpeg_video_filter_plugin` to your list of dependencies in `mix.exs`:
 
 ```elixir
