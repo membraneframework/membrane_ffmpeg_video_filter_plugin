@@ -17,7 +17,9 @@ defmodule TextOverlay.TextOverlayTest do
       Pipeline.start_link_supervised!(
         structure:
           child(:src, %Membrane.File.Source{chunk_size: 40_960, location: in_path})
-          |> child(:parser, %Membrane.H264.Parser{generate_best_effort_timestamps: %{framerate: {8, 1}}})
+          |> child(:parser, %Membrane.H264.Parser{
+            generate_best_effort_timestamps: %{framerate: {8, 1}}
+          })
           |> child(:decoder, Membrane.H264.FFmpeg.Decoder)
           |> child(:text_filter, %TextOverlay{text: "Some very long text"})
           |> child(:sink, %Membrane.File.Sink{location: out_path})
@@ -43,7 +45,9 @@ defmodule TextOverlay.TextOverlayTest do
       Pipeline.start_link_supervised!(
         structure: [
           child(:src, %Membrane.File.Source{chunk_size: 40_960, location: in_path})
-          |> child(:parser, %Membrane.H264.Parser{generate_best_effort_timestamps: %{framerate: {8, 1}}})
+          |> child(:parser, %Membrane.H264.Parser{
+            generate_best_effort_timestamps: %{framerate: {8, 1}}
+          })
           |> child(:decoder, Membrane.H264.FFmpeg.Decoder)
           |> child(:text_filter, %TextOverlay{
             text: "My text",
@@ -73,7 +77,9 @@ defmodule TextOverlay.TextOverlayTest do
       Pipeline.start_link_supervised!(
         structure: [
           child(:src, %Membrane.File.Source{chunk_size: 40_960, location: in_path})
-          |> child(:parser, %Membrane.H264.Parser{generate_best_effort_timestamps: %{framerate: {8, 1}}})
+          |> child(:parser, %Membrane.H264.Parser{
+            generate_best_effort_timestamps: %{framerate: {8, 1}}
+          })
           |> child(:decoder, Membrane.H264.FFmpeg.Decoder)
           |> child(:text_filter, %TextOverlay{
             text: "My text",
@@ -115,7 +121,9 @@ defmodule TextOverlay.TextOverlayTest do
       Pipeline.start_link_supervised!(
         structure: [
           child(:src, %Membrane.File.Source{chunk_size: 40_960, location: in_path})
-          |> child(:parser, %Membrane.H264.Parser{generate_best_effort_timestamps: %{framerate: {2, 1}}})
+          |> child(:parser, %Membrane.H264.Parser{
+            generate_best_effort_timestamps: %{framerate: {2, 1}}
+          })
           |> child(:decoder, Membrane.H264.FFmpeg.Decoder)
           |> child(
             :text_filter,
@@ -154,7 +162,9 @@ defmodule TextOverlay.TextOverlayTest do
       Pipeline.start_link_supervised!(
         structure: [
           child(:src, %Membrane.File.Source{chunk_size: 40_960, location: in_path})
-          |> child(:parser, %Membrane.H264.Parser{generate_best_effort_timestamps: %{framerate: {9, 1}}})
+          |> child(:parser, %Membrane.H264.Parser{
+            generate_best_effort_timestamps: %{framerate: {9, 1}}
+          })
           |> child(:decoder, Membrane.H264.FFmpeg.Decoder)
           |> child(:text_filter, %TextOverlay{
             text_intervals: [
