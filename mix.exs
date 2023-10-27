@@ -1,7 +1,7 @@
 defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
   use Mix.Project
 
-  @version "0.11.0"
+  @version "0.11.1"
   @github_url "https://github.com/membraneframework/membrane_ffmpeg_video_filter_plugin"
 
   def project do
@@ -43,7 +43,8 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
       {:bundlex, "~> 1.2"},
       # Testing
       {:membrane_file_plugin, "~> 0.13", only: :test},
-      {:membrane_h264_ffmpeg_plugin, "~> 0.27.0", only: :test},
+      {:membrane_h264_ffmpeg_plugin, "~> 0.30.0", only: :test},
+      {:membrane_h264_plugin, "~> 0.8.0", only: :test},
       # Development
       {:ex_doc, "~> 0.28", only: :dev, runtime: false},
       {:dialyxir, "~> 1.1", only: :dev, runtime: false},
