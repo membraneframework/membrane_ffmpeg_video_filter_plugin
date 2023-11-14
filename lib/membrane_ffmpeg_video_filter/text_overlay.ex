@@ -78,14 +78,9 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
                 default: :bottom
               ]
 
-  def_input_pad :input,
-    demand_mode: :auto,
-    demand_unit: :buffers,
-    accepted_format: %RawVideo{aligned: true}
+  def_input_pad :input,    accepted_format: %RawVideo{aligned: true}
 
-  def_output_pad :output,
-    demand_mode: :auto,
-    accepted_format: %RawVideo{aligned: true}
+  def_output_pad :output,    accepted_format: %RawVideo{aligned: true}
 
   @impl true
   def handle_init(_ctx, options) do
@@ -125,7 +120,7 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
   end
 
   @impl true
-  def handle_process(
+  def handle_buffer(
         :input,
         %Buffer{pts: nil} = buffer,
         _ctx,
@@ -141,7 +136,7 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
     end
   end
 
-  def handle_process(:input, buffer, ctx, state) do
+  def handle_buffer(:input, buffer, ctx, state) do
     {buffer, state} = apply_filter_if_needed(buffer, ctx, state)
     {[buffer: {:output, buffer}], state}
   end
