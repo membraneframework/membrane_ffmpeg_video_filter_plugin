@@ -78,9 +78,9 @@ defmodule Membrane.FFmpeg.VideoFilter.TextOverlay do
                 default: :bottom
               ]
 
-  def_input_pad :input,    accepted_format: %RawVideo{aligned: true}
+  def_input_pad :input, accepted_format: %RawVideo{aligned: true}
 
-  def_output_pad :output,    accepted_format: %RawVideo{aligned: true}
+  def_output_pad :output, accepted_format: %RawVideo{aligned: true}
 
   @impl true
   def handle_init(_ctx, options) do
