@@ -15,7 +15,7 @@ defmodule TextOverlay.TextOverlayTest do
 
     pipeline =
       Pipeline.start_link_supervised!(
-        structure:
+        spec:
           child(:src, %Membrane.File.Source{chunk_size: 40_960, location: in_path})
           |> child(:parser, %Membrane.H264.Parser{
             generate_best_effort_timestamps: %{framerate: {8, 1}}
@@ -43,7 +43,7 @@ defmodule TextOverlay.TextOverlayTest do
 
     pipeline =
       Pipeline.start_link_supervised!(
-        structure: [
+        spec: [
           child(:src, %Membrane.File.Source{chunk_size: 40_960, location: in_path})
           |> child(:parser, %Membrane.H264.Parser{
             generate_best_effort_timestamps: %{framerate: {8, 1}}
@@ -75,7 +75,7 @@ defmodule TextOverlay.TextOverlayTest do
 
     pipeline =
       Pipeline.start_link_supervised!(
-        structure: [
+        spec: [
           child(:src, %Membrane.File.Source{chunk_size: 40_960, location: in_path})
           |> child(:parser, %Membrane.H264.Parser{
             generate_best_effort_timestamps: %{framerate: {8, 1}}
@@ -119,7 +119,7 @@ defmodule TextOverlay.TextOverlayTest do
 
     pipeline =
       Pipeline.start_link_supervised!(
-        structure: [
+        spec: [
           child(:src, %Membrane.File.Source{chunk_size: 40_960, location: in_path})
           |> child(:parser, %Membrane.H264.Parser{
             generate_best_effort_timestamps: %{framerate: {2, 1}}
@@ -160,7 +160,7 @@ defmodule TextOverlay.TextOverlayTest do
 
     pipeline =
       Pipeline.start_link_supervised!(
-        structure: [
+        spec: [
           child(:src, %Membrane.File.Source{chunk_size: 40_960, location: in_path})
           |> child(:parser, %Membrane.H264.Parser{
             generate_best_effort_timestamps: %{framerate: {9, 1}}
