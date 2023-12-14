@@ -1,7 +1,7 @@
 defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
   use Mix.Project
 
-  @version "0.13.0"
+  @version "0.13.1"
   @github_url "https://github.com/membraneframework/membrane_ffmpeg_video_filter_plugin"
 
   def project do
@@ -41,6 +41,7 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
       {:membrane_common_c, "~> 0.16.0"},
       {:unifex, "~> 1.0"},
       {:bundlex, "~> 1.2"},
+      {:membrane_precompiled_dependency_provider, "~> 0.1.0"},
       # Testing
       {:membrane_file_plugin, "~> 0.13", only: :test},
       {:membrane_h264_ffmpeg_plugin, "~> 0.31.0", only: :test},
