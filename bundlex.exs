@@ -14,8 +14,10 @@ defmodule Membrane.FFmpeg.VideoFilter.BundlexProject do
         sources: ["text_overlay.c"],
         os_deps: [
           ffmpeg: [
-            {:precompiled, Membrane.PrecompiledDependencyProvider.get_dependency_url(:ffmpeg),
-             ["libavutil", "libavfilter"]},
+            {:precompiled,
+             Membrane.PrecompiledDependencyProvider.get_dependency_url(:ffmpeg,
+               version: "6.0.1"
+             ), ["libavutil", "libavfilter"]},
             {:pkg_config, ["libavutil", "libavfilter"]}
           ]
         ],
