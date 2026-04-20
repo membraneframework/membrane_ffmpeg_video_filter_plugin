@@ -1,7 +1,7 @@
 defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
   use Mix.Project
 
-  @version "0.13.1"
+  @version "0.13.2"
   @github_url "https://github.com/membraneframework/membrane_ffmpeg_video_filter_plugin"
 
   def project do
@@ -15,8 +15,7 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
       aliases: aliases(),
       deps: deps(),
       diayzer: dialyzer(),
-      description:
-        "Plugin for applying video filters using [FFmpeg](https://www.ffmpeg.org/) library",
+      description: "Applies FFmpeg video filters (like text overlays) to raw video frames.",
       package: package(),
       name: "Membrane FFmpeg Video Filter plugin",
       source_url: @github_url,
@@ -47,7 +46,7 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
       {:membrane_h264_ffmpeg_plugin, "~> 0.31.0", only: :test},
       {:membrane_h264_plugin, "~> 0.9.0", only: :test},
       # Development
-      {:ex_doc, "~> 0.28", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.40", only: :dev, runtime: false},
       {:dialyxir, "~> 1.1", only: :dev, runtime: false},
       {:credo, "~> 1.6", only: :dev, runtime: false}
     ]
@@ -87,7 +86,6 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
     [
       main: "readme",
       extras: ["README.md", "LICENSE"],
-      formatters: ["html"],
       source_ref: "v#{@version}",
       nest_modules_by_prefix: [Membrane.FFmpeg.VideoFilter]
     ]
