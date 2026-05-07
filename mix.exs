@@ -47,9 +47,9 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
       {:membrane_h264_ffmpeg_plugin, "~> 0.32.0", only: :test},
       {:membrane_h264_plugin, "~> 0.9.0", only: :test},
       # Development
-      {:ex_doc, "~> 0.34", only: :dev, runtime: false},
-      {:dialyxir, "~> 1.4", only: :dev, runtime: false},
-      {:credo, "~> 1.7", only: :dev, runtime: false}
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
+      {:dialyxir, ">= 0.0.0", only: :dev, runtime: false},
+      {:credo, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
 
@@ -68,8 +68,7 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
 
   defp dialyzer() do
     opts = [
-      flags: [:error_handling],
-      plt_add_apps: [:syntax_tools]
+      flags: [:error_handling]
     ]
 
     if System.get_env("CI") == "true" do
