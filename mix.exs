@@ -1,7 +1,7 @@
 defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
   use Mix.Project
 
-  @version "0.13.1"
+  @version "0.13.2"
   @github_url "https://github.com/membraneframework/membrane_ffmpeg_video_filter_plugin"
 
   def project do
@@ -37,19 +37,19 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
   defp deps do
     [
       {:membrane_core, "~> 1.0"},
-      {:membrane_raw_video_format, "~> 0.3.0"},
+      {:membrane_raw_video_format, "~> 0.4.0"},
       {:membrane_common_c, "~> 0.16.0"},
       {:unifex, "~> 1.0"},
       {:bundlex, "~> 1.2"},
-      {:membrane_precompiled_dependency_provider, "~> 0.1.0"},
+      {:membrane_precompiled_dependency_provider, "~> 0.2.0"},
       # Testing
       {:membrane_file_plugin, "~> 0.13", only: :test},
-      {:membrane_h264_ffmpeg_plugin, "~> 0.31.0", only: :test},
+      {:membrane_h264_ffmpeg_plugin, "~> 0.32.0", only: :test},
       {:membrane_h264_plugin, "~> 0.9.0", only: :test},
       # Development
-      {:ex_doc, "~> 0.28", only: :dev, runtime: false},
-      {:dialyxir, "~> 1.1", only: :dev, runtime: false},
-      {:credo, "~> 1.6", only: :dev, runtime: false}
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
+      {:dialyxir, ">= 0.0.0", only: :dev, runtime: false},
+      {:credo, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
 
@@ -73,6 +73,7 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
 
     if System.get_env("CI") == "true" do
       # Store PLTs in cacheable directory for CI
+      File.mkdir_p!(Path.join([__DIR__, "priv", "plts"]))
       [plt_local_path: "priv/plts", plt_core_path: "priv/plts"] ++ opts
     else
       opts
@@ -94,8 +95,10 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
   end
 
   defp copy_images(_) do
-    File.cp_r("readme", "doc/readme", fn source, destination ->
-      IO.gets("Overwriting #{destination} by #{source}. Type y to confirm. ") == "y\n"
-    end)
+    File.cp_r("readme", "doc/readme",
+      on_conflict: fn source, destination ->
+        IO.gets("Overwriting #{destination} by #{source}. Type y to confirm. ") == "y\n"
+      end
+    )
   end
 end
