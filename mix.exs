@@ -1,7 +1,7 @@
 defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
   use Mix.Project
 
-  @version "0.13.2"
+  @version "0.13.3"
   @github_url "https://github.com/membraneframework/membrane_ffmpeg_video_filter_plugin"
 
   def project do
@@ -47,7 +47,7 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
       {:membrane_h264_ffmpeg_plugin, "~> 0.32.0", only: :test},
       {:membrane_h264_plugin, "~> 0.9.0", only: :test},
       # Development
-      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
+      {:ex_doc, ">= 0.40.0", only: :dev, runtime: false},
       {:dialyxir, ">= 0.0.0", only: :dev, runtime: false},
       {:credo, ">= 0.0.0", only: :dev, runtime: false}
     ]
@@ -81,17 +81,38 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
   end
 
   defp aliases do
-    [docs: ["docs", &copy_images/1]]
+    [docs: ["docs", &copy_images/1, &append_llms_links/1]]
   end
 
   defp docs do
     [
       main: "readme",
       extras: ["README.md", "LICENSE"],
-      formatters: ["html"],
       source_ref: "v#{@version}",
       nest_modules_by_prefix: [Membrane.FFmpeg.VideoFilter]
     ]
+  end
+
+  defp append_llms_links(_args) do
+    output_dir = docs()[:output] || "doc"
+    path = Path.join(output_dir, "llms.txt")
+
+    if File.exists?(path) do
+      existing = File.read!(path)
+
+      footer = """
+
+
+      ## See Also
+
+      - [Membrane Framework AI Skill](https://hexdocs.pm/membrane_core/skill.md)
+      - [Membrane Core](https://hexdocs.pm/membrane_core/llms.txt)
+      """
+
+      File.write!(path, String.trim_trailing(existing) <> footer)
+    else
+      IO.warn("#{path} not found — llms.txt was not generated, check your ex_doc configuration")
+    end
   end
 
   defp copy_images(_) do
