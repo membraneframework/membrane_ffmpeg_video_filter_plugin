@@ -81,7 +81,7 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
   end
 
   defp aliases do
-    [docs: ["docs", &copy_images/1, &prepend_llms_links/1]]
+    [docs: ["docs", &copy_images/1, &append_llms_links/1]]
   end
 
   defp docs do
@@ -93,7 +93,7 @@ defmodule Membrane.FFmpeg.VideoFilter.Mixfile do
     ]
   end
 
-  defp prepend_llms_links(_) do
+  defp append_llms_links(_args) do
     output_dir = docs()[:output] || "doc"
     path = Path.join(output_dir, "llms.txt")
 
