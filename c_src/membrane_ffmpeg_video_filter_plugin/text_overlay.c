@@ -56,8 +56,20 @@ UNIFEX_TERM apply_filter(UnifexEnv *env, UnifexPayload *payload, State *state) {
   frame->format = state->pixel_format;
   frame->width = state->width;
   frame->height = state->height;
-  av_image_fill_arrays(frame->data, frame->linesize, payload->data,
-                       frame->format, frame->width, frame->height, 1);
+
+  // The payload is read as a full frame of the negotiated format, so a shorter
+  // one would be read out of bounds.
+  int frame_size = av_image_get_buffer_size(frame->format, frame->width,
+                                            frame->height, 1);
+  if (frame_size < 0 || payload->size < (unsigned int)frame_size) {
+    res = apply_filter_result_error(env, "invalid_frame_size");
+    goto exit_filter;
+  }
+  if (av_image_fill_arrays(frame->data, frame->linesize, payload->data,
+                           frame->format, frame->width, frame->height, 1) < 0) {
+    res = apply_filter_result_error(env, "invalid_frame_size");
+    goto exit_filter;
+  }
 
   /* feed the filtergraph */
   if (av_buffersrc_add_frame_flags(state->buffersrc_ctx, frame,

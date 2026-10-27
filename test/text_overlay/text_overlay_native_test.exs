@@ -41,4 +41,27 @@ defmodule TextOverlay.NativeTest do
 
     Helpers.compare_contents(out_path, ref_path)
   end
+
+  test "reject frames shorter than the stream format" do
+    assert {:ok, ref} =
+             Native.create(
+               "mtext",
+               640,
+               360,
+               :I420,
+               12,
+               "white",
+               "",
+               false,
+               "",
+               0,
+               "",
+               :center,
+               :top
+             )
+
+    for frame <- [<<>>, :binary.copy(<<0>>, 345_599)] do
+      assert {:error, :invalid_frame_size} = Native.apply_filter(frame, ref)
+    end
+  end
 end
