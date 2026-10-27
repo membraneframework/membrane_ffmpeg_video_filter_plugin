@@ -41,4 +41,25 @@ defmodule TextOverlay.NativeTest do
 
     Helpers.compare_contents(out_path, ref_path)
   end
+
+  test "unsupported pixel format is reported without crashing" do
+    assert {:error, :unsupported_pixel_format} =
+             Native.create(
+               "mtext",
+               640,
+               360,
+               :RGB,
+               12,
+               "white",
+               "",
+               false,
+               "",
+               0,
+               "",
+               :center,
+               :top
+             )
+
+    :erlang.garbage_collect()
+  end
 end

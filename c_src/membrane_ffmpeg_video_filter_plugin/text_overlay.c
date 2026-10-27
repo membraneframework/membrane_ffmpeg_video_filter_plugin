@@ -18,6 +18,9 @@ UNIFEX_TERM create(UnifexEnv *env, char *text, int width, int height,
   State *state = unifex_alloc_state(env);
   state->width = width;
   state->height = height;
+  state->filter_graph = NULL;
+  state->buffersrc_ctx = NULL;
+  state->buffersink_ctx = NULL;
 
   int pix_fmt = get_pixel_format(pixel_format_name);
   if (pix_fmt < 0) {
