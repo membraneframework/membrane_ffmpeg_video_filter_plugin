@@ -41,4 +41,23 @@ defmodule TextOverlay.NativeTest do
 
     Helpers.compare_contents(out_path, ref_path)
   end
+
+  test "reject a text that does not fit in the filter description" do
+    assert {:error, :filter_description_too_long} =
+             Native.create(
+               String.duplicate("a", 600),
+               640,
+               360,
+               :I420,
+               12,
+               "white",
+               "",
+               false,
+               "",
+               0,
+               "",
+               :center,
+               :top
+             )
+  end
 end

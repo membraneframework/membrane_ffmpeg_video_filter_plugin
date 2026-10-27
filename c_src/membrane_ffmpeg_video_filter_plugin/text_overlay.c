@@ -2,11 +2,11 @@
 
 int get_pixel_format(char *fmt_name);
 static int init_filters(const char *filters_descr, State *state);
-void create_filter_description(char *filter_descr, int len, char *text,
-                               int font_size, char *font_color, char *font_file,
-                               int box, char *box_color, int border_width,
-                               char *border_color, char *horizontal_align,
-                               char *vertical_align);
+int create_filter_description(char *filter_descr, int len, char *text,
+                              int font_size, char *font_color, char *font_file,
+                              int box, char *box_color, int border_width,
+                              char *border_color, char *horizontal_align,
+                              char *vertical_align);
 
 UNIFEX_TERM create(UnifexEnv *env, char *text, int width, int height,
                    char *pixel_format_name, int font_size, char *font_color,
@@ -27,9 +27,13 @@ UNIFEX_TERM create(UnifexEnv *env, char *text, int width, int height,
   state->pixel_format = pix_fmt;
 
   char filter_descr[512];
-  create_filter_description(filter_descr, 512, text, font_size, font_color,
-                            font_file, box, box_color, border_width,
-                            border_color, horizontal_align, vertical_align);
+  if (create_filter_description(filter_descr, sizeof(filter_descr), text,
+                                font_size, font_color, font_file, box,
+                                box_color, border_width, border_color,
+                                horizontal_align, vertical_align) < 0) {
+    result = create_result_error(env, "filter_description_too_long");
+    goto exit_create;
+  }
   if (init_filters(filter_descr, state) < 0) {
     result = create_result_error(env, "error_creating_filters");
     goto exit_create;
@@ -109,53 +113,66 @@ int get_pixel_format(char *fmt_name) {
   return pix_fmt;
 }
 
-void create_filter_description(char *filter_descr, int len, char *text,
-                               int font_size, char *font_color, char *font_file,
-                               int box, char *box_color, int border_width,
-                               char *border_color, char *horizontal_align,
-                               char *vertical_align) {
-  filter_descr += snprintf(filter_descr, len, "drawtext=text=%s", text);
+// Appends to filter_descr, tracking the remaining space. Returns -1 when the
+// description does not fit in len bytes.
+#define APPEND(...)                                                            \
+  do {                                                                         \
+    int n = snprintf(filter_descr + written, len - written, __VA_ARGS__);      \
+    if (n < 0 || n >= len - written)                                           \
+      return -1;                                                               \
+    written += n;                                                              \
+  } while (0)
+
+int create_filter_description(char *filter_descr, int len, char *text,
+                              int font_size, char *font_color, char *font_file,
+                              int box, char *box_color, int border_width,
+                              char *border_color, char *horizontal_align,
+                              char *vertical_align) {
+  int written = 0;
+  APPEND("drawtext=text=%s", text);
   if (font_size != -1) {
-    filter_descr += snprintf(filter_descr, len, ":fontsize=%d", font_size);
+    APPEND(":fontsize=%d", font_size);
   }
   if (box != -1) {
-    filter_descr += snprintf(filter_descr, len, ":box=%d", box);
+    APPEND(":box=%d", box);
   }
   if (strcmp(box_color, "") != 0) {
-    filter_descr += snprintf(filter_descr, len, ":boxcolor=%s", box_color);
+    APPEND(":boxcolor=%s", box_color);
   }
   if (strcmp(font_color, "") != 0) {
-    filter_descr += snprintf(filter_descr, len, ":fontcolor=%s", font_color);
+    APPEND(":fontcolor=%s", font_color);
   }
   if (strcmp(font_file, "") != 0) {
-    filter_descr += snprintf(filter_descr, len, ":fontfile=%s", font_file);
+    APPEND(":fontfile=%s", font_file);
   }
   if (border_width > 0) {
-    filter_descr += snprintf(filter_descr, len, ":bordercolor=%s:borderw=%d",
-                             border_color, border_width);
+    APPEND(":bordercolor=%s:borderw=%d", border_color, border_width);
   }
   if (strcmp(horizontal_align, "center") == 0) {
-    filter_descr += snprintf(filter_descr, len, ":x=(w-text_w)/2");
+    APPEND(":x=(w-text_w)/2");
   } else if (strcmp(horizontal_align, "right") == 0) {
     // leave 1% margin to the border
-    filter_descr += snprintf(filter_descr, len, ":x=(w-text_w)-w/100");
+    APPEND(":x=(w-text_w)-w/100");
   } else if (strcmp(horizontal_align, "left") == 0) {
     // leave 1% margin to the border
-    filter_descr += snprintf(filter_descr, len, ":x=w/100");
+    APPEND(":x=w/100");
   } else { // literal
-    filter_descr += snprintf(filter_descr, len, ":x=%s", horizontal_align);
+    APPEND(":x=%s", horizontal_align);
   }
   if (strcmp(vertical_align, "center") == 0) {
-    filter_descr += snprintf(filter_descr, len, ":y=(h-text_h)/2");
+    APPEND(":y=(h-text_h)/2");
   } else if (strcmp(vertical_align, "top") == 0) {
     // set the same margin for width and height
-    filter_descr += snprintf(filter_descr, len, ":y=w/100");
+    APPEND(":y=w/100");
   } else if (strcmp(vertical_align, "bottom") == 0) {
-    filter_descr += snprintf(filter_descr, len, ":y=(h-text_h)-w/100");
+    APPEND(":y=(h-text_h)-w/100");
   } else { // literal
-    filter_descr += snprintf(filter_descr, len, ":y=%s", vertical_align);
+    APPEND(":y=%s", vertical_align);
   }
+  return written;
 }
+
+#undef APPEND
 
 static int init_filters(const char *filters_descr, State *state) {
   char args[512];
